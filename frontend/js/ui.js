@@ -108,11 +108,15 @@ const UI = {
         return labels[type] || type;
     },
 
-    // Calculate days until date
+    // Calculate whole days until date (based on user's day start)
     daysUntil(date) {
+        const msPerDay = 24 * 60 * 60 * 1000;
         const today = new Date();
         const target = new Date(date);
-        const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+        // Normalize to local midnight to avoid timezone/ceil drift
+        today.setHours(0, 0, 0, 0);
+        target.setHours(0, 0, 0, 0);
+        const diff = Math.floor((target - today) / msPerDay);
         return diff;
     },
 
