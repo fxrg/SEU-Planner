@@ -1,0 +1,223 @@
+/* ==================== Auth Container ==================== */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    animation: slideUp 0.5s ease;
+}
+
+.auth-card * {
+    color: #212529;
+}
+
+.auth-card h1,
+.auth-card h2 {
+    color: #212529 !important;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h1 {
+    font-size: 2rem;
+    color: #212529;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.auth-header .auth-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.auth-header p {
+    color: #495057;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* ==================== Auth Form ==================== */
+.auth-form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    color: #212529;
+    background: #ffffff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #6c757d;
+}
+
+.form-group select option {
+    color: #212529;
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-left: 8px;
+}
+
+.auth-card .btn {
+    font-weight: 600;
+}
+
+.auth-card .btn-primary {
+    background: #0066cc;
+    color: white !important;
+}
+
+.auth-card .btn-primary:hover {
+    background: #0052a3;
+}
+
+/* ==================== Auth Footer ==================== */
+.auth-footer {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.auth-footer p {
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.auth-footer a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+    color: #0052a3;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 30px 20px;
+    }
+    
+    .auth-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ==================== Dark Mode ==================== */
+body.dark-mode .auth-container {
+    background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 100%);
+}
+
+body.dark-mode .auth-card {
+    background: #2a2a3a;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .auth-card * {
+    color: #ffffff;
+}
+
+body.dark-mode .auth-card h1,
+body.dark-mode .auth-card h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .auth-header p {
+    color: #d0d0d0;
+}
+
+body.dark-mode .form-group label {
+    color: #ffffff;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select {
+    background: #1e1e2e;
+    border: 2px solid #3a3a4a;
+    color: #ffffff;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus {
+    border-color: #5a9fff;
+    background: #252535;
+    box-shadow: 0 0 0 3px rgba(90, 159, 255, 0.15);
+}
+
+body.dark-mode .form-group input::placeholder {
+    color: #888;
+}
+
+body.dark-mode .form-group select option {
+    color: #ffffff;
+    background: #1e1e2e;
+}
+
+body.dark-mode .auth-footer {
+    border-top: 1px solid #3a3a4a;
+}
+
+body.dark-mode .auth-footer p {
+    color: #d0d0d0;
+}
+
+body.dark-mode .auth-footer a {
+    color: #5a9fff;
+}
+
+body.dark-mode .auth-footer a:hover {
+    color: #7ab4ff;
+}

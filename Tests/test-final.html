@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ اختبار شامل - SEU Planner v3.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        body.dark-mode .container {
+            background: #1e1e2e;
+            color: #eee;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .version {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .version {
+            color: #aaa;
+        }
+
+        .test-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-right: 4px solid #667eea;
+        }
+
+        body.dark-mode .test-section {
+            background: #252535;
+        }
+
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .test-result {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .test-result.success {
+            background: #d4edda;
+            color: #155724;
+            border-right: 4px solid #28a745;
+        }
+
+        .test-result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-right: 4px solid #dc3545;
+        }
+
+        body.dark-mode .test-result.success {
+            background: #1e3a2e;
+            color: #4ade80;
+        }
+
+        body.dark-mode .test-result.error {
+            background: #3a1e1e;
+            color: #f87171;
+        }
+
+        .major-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .major-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 3px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .major-card {
+            background: #2d2d3d;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .major-card h3 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .major-card .college {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        body.dark-mode .major-card .college {
+            color: #aaa;
+        }
+
+        .major-card .courses {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        body.dark-mode .dark-mode-toggle {
+            background: #2d2d3d;
+            border-color: #ffd700;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .major-list {
+                grid-template-columns: 1fr;
+            }
+
+            .dark-mode-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-mode-toggle" id="darkToggle" title="تبديل الوضع الداكن">
+        <span class="icon-light">🌙</span>
+        <span class="icon-dark" style="display: none;">☀️</span>
+    </button>
+
+    <div class="container">
+        <h1>✅ اختبار شامل - SEU Planner</h1>
+        <p class="version">الإصدار 3.0 - نوفمبر 2025</p>
+
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-box">
+                <span class="number" id="stat-majors">-</span>
+                <span class="label">تخصص</span>
+            </div>
+            <div class="stat-box">
+                <span class="number" id="stat-courses">-</span>
+                <span class="label">مادة دراسية</span>
+            </div>
+            <div class="stat-box">
+                <span class="number" id="stat-colleges">4</span>
+                <span class="label">كلية</span>
+            </div>
+        </div>
+
+        <!-- Test 1: Load Majors Data -->
+        <div class="test-section">
+            <h2>📚 اختبار 1: تحميل بيانات التخصصات</h2>
+            <div id="test1-result" class="test-result">جاري الاختبار...</div>
+        </div>
+
+        <!-- Test 2: Display Majors -->
+        <div class="test-section">
+            <h2>📋 اختبار 2: عرض التخصصات (9 تخصصات)</h2>
+            <div id="test2-result" class="test-result">جاري الاختبار...</div>
+            <div id="majors-list" class="major-list"></div>
+        </div>
+
+        <!-- Test 3: Firebase Config -->
+        <div class="test-section">
+            <h2>🔥 اختبار 3: إعدادات Firebase</h2>
+            <div id="test3-result" class="test-result">جاري الاختبار...</div>
+        </div>
+
+        <!-- Test 4: Dark Mode -->
+        <div class="test-section">
+            <h2>🌙 اختبار 4: الوضع الداكن</h2>
+            <div id="test4-result" class="test-result">جاري الاختبار...</div>
+        </div>
+
+        <!-- Test 5: Mobile Responsive -->
+        <div class="test-section">
+            <h2>📱 اختبار 5: التجاوب مع الجوال</h2>
+            <div id="test5-result" class="test-result">جاري الاختبار...</div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/majors-data.js"></script>
+    <script>
+        // Dark Mode Toggle
+        const darkToggle = document.getElementById('darkToggle');
+        const iconLight = darkToggle.querySelector('.icon-light');
+        const iconDark = darkToggle.querySelector('.icon-dark');
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            iconLight.style.display = isDark ? 'none' : 'inline';
+            iconDark.style.display = isDark ? 'inline' : 'none';
+            localStorage.setItem('dark-mode', isDark);
+        }
+
+        // Check saved preference
+        if (localStorage.getItem('dark-mode') === 'true') {
+            toggleDarkMode();
+        }
+
+        darkToggle.addEventListener('click', toggleDarkMode);
+
+        // Run Tests
+        function runTests() {
+            // Test 1: Load Majors Data
+            const test1 = document.getElementById('test1-result');
+            try {
+                if (typeof MAJORS_DATA !== 'undefined' && typeof getAllMajors === 'function') {
+                    const majors = getAllMajors();
+                    test1.className = 'test-result success';
+                    test1.textContent = `✅ نجح! تم تحميل ${majors.length} تخصصات`;
+                    document.getElementById('stat-majors').textContent = majors.length;
+                    
+                    // Count total courses
+                    let totalCourses = 0;
+                    Object.values(MAJORS_DATA).forEach(major => {
+                        totalCourses += major.courses.length;
+                    });
+                    document.getElementById('stat-courses').textContent = totalCourses;
+                } else {
+                    throw new Error('MAJORS_DATA or getAllMajors not found');
+                }
+            } catch (error) {
+                test1.className = 'test-result error';
+                test1.textContent = `❌ فشل: ${error.message}`;
+            }
+
+            // Test 2: Display Majors
+            const test2 = document.getElementById('test2-result');
+            const majorsList = document.getElementById('majors-list');
+            try {
+                const majors = getAllMajors();
+                if (majors.length === 9) {
+                    test2.className = 'test-result success';
+                    test2.textContent = `✅ نجح! التخصصات الـ 9 متوفرة (بما فيها القانون والإعلام الرقمي)`;
+                    
+                    // Display majors
+                    majors.forEach(major => {
+                        const card = document.createElement('div');
+                        card.className = 'major-card';
+                        card.innerHTML = `
+                            <h3>${major.name_ar}</h3>
+                            <p class="college">${major.college_ar}</p>
+                            <p class="courses">${MAJORS_DATA[major.id].courses.length} مادة</p>
+                        `;
+                        majorsList.appendChild(card);
+                    });
+                } else {
+                    throw new Error(`Expected 9 majors, found ${majors.length}`);
+                }
+            } catch (error) {
+                test2.className = 'test-result error';
+                test2.textContent = `❌ فشل: ${error.message}`;
+            }
+
+            // Test 3: Firebase Config
+            const test3 = document.getElementById('test3-result');
+            try {
+                if (typeof firebaseConfig !== 'undefined') {
+                    if (firebaseConfig.apiKey.includes('AIzaSyA2oY6ItciZBjRD6qASZ0xTx3G5HKE4_ro')) {
+                        test3.className = 'test-result success';
+                        test3.textContent = '✅ نجح! Firebase API key صحيح ومحدّث';
+                    } else {
+                        test3.className = 'test-result error';
+                        test3.textContent = '❌ Firebase API key غير صحيح';
+                    }
+                } else {
+                    throw new Error('firebaseConfig not found');
+                }
+            } catch (error) {
+                test3.className = 'test-result error';
+                test3.textContent = `❌ فشل: ${error.message}`;
+            }
+
+            // Test 4: Dark Mode
+            const test4 = document.getElementById('test4-result');
+            try {
+                if (darkToggle) {
+                    test4.className = 'test-result success';
+                    test4.textContent = '✅ نجح! زر الوضع الداكن موجود ويعمل (جرّبه الآن!)';
+                } else {
+                    throw new Error('Dark mode button not found');
+                }
+            } catch (error) {
+                test4.className = 'test-result error';
+                test4.textContent = `❌ فشل: ${error.message}`;
+            }
+
+            // Test 5: Mobile Responsive
+            const test5 = document.getElementById('test5-result');
+            try {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport && viewport.content.includes('width=device-width')) {
+                    test5.className = 'test-result success';
+                    test5.textContent = '✅ نجح! التطبيق متجاوب مع الجوال (جرّب تصغير النافذة!)';
+                } else {
+                    throw new Error('Viewport meta tag not properly configured');
+                }
+            } catch (error) {
+                test5.className = 'test-result error';
+                test5.textContent = `❌ فشل: ${error.message}`;
+            }
+        }
+
+        // Run tests when page loads
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

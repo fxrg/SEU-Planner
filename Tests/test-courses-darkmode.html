@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ اختبار المواد والوضع الداكن</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Dark Mode Colors */
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f0f1e 0%, #1e1e2e 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        body.dark-mode .container {
+            background: #1e1e2e;
+            color: #f0f0f0;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        body.dark-mode h1 {
+            color: #4a9eff;
+        }
+
+        .toggle-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .toggle-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        body.dark-mode .toggle-btn {
+            background: #4a9eff;
+        }
+
+        .majors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .major-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-right: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .major-card {
+            background: #2a2a3a;
+            border-right-color: #4a9eff;
+        }
+
+        .major-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .major-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        body.dark-mode .major-card h3 {
+            color: #4a9eff;
+        }
+
+        .major-card .college {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .major-card .college {
+            color: #b0b0b0;
+        }
+
+        .courses-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+
+        .major-card.expanded .courses-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .course-item {
+            background: white;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-right: 3px solid #28a745;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .course-item {
+            background: #1e1e2e;
+            border-right-color: #4ade80;
+        }
+
+        .course-code {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 0.95rem;
+        }
+
+        body.dark-mode .course-code {
+            color: #4a9eff;
+        }
+
+        .course-name {
+            flex: 1;
+            margin: 0 10px;
+            color: #333;
+        }
+
+        body.dark-mode .course-name {
+            color: #f0f0f0;
+        }
+
+        .course-difficulty {
+            color: #ffc107;
+            font-size: 0.85rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        body.dark-mode .stat-box {
+            background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%);
+        }
+
+        .stat-box .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-box .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .comparison {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        body.dark-mode .comparison {
+            background: #2a2a3a;
+        }
+
+        .comparison h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .comparison h3 {
+            color: #4a9eff;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .compare-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        body.dark-mode .compare-item {
+            background: #1e1e2e;
+        }
+
+        .compare-item h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        body.dark-mode .compare-item h4 {
+            color: #f0f0f0;
+        }
+
+        .compare-item ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .compare-item li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+
+        body.dark-mode .compare-item li {
+            border-bottom-color: #3a3a4a;
+            color: #b0b0b0;
+        }
+
+        .compare-item li:last-child {
+            border-bottom: none;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status.good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.bad {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        body.dark-mode .status.good {
+            background: #1e3a2e;
+            color: #4ade80;
+        }
+
+        body.dark-mode .status.bad {
+            background: #3a1e1e;
+            color: #f87171;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .majors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ اختبار المواد والوضع الداكن المحسّن</h1>
+
+        <div class="toggle-container">
+            <button class="toggle-btn" onclick="toggleDarkMode()">
+                <span id="mode-icon">🌙</span>
+                <span id="mode-text"> تبديل الوضع الداكن</span>
+            </button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-box">
+                <span class="number" id="total-majors">9</span>
+                <span class="label">تخصص</span>
+            </div>
+            <div class="stat-box">
+                <span class="number" id="total-courses">359</span>
+                <span class="label">مادة دراسية</span>
+            </div>
+            <div class="stat-box">
+                <span class="number">4</span>
+                <span class="label">كلية</span>
+            </div>
+        </div>
+
+        <!-- Dark Mode Comparison -->
+        <div class="comparison">
+            <h3>🌓 مقارنة الوضع الداكن</h3>
+            <div class="comparison-grid">
+                <div class="compare-item">
+                    <h4>❌ قبل التحسين</h4>
+                    <ul>
+                        <li>ألوان باهتة <span class="status bad">سيء</span></li>
+                        <li>نصوص غير واضحة <span class="status bad">سيء</span></li>
+                        <li>تباين منخفض <span class="status bad">سيء</span></li>
+                        <li>إجهاد للعين <span class="status bad">سيء</span></li>
+                    </ul>
+                </div>
+                <div class="compare-item">
+                    <h4>✅ بعد التحسين</h4>
+                    <ul>
+                        <li>ألوان واضحة <span class="status good">ممتاز</span></li>
+                        <li>نصوص حادة <span class="status good">ممتاز</span></li>
+                        <li>تباين عالي <span class="status good">ممتاز</span></li>
+                        <li>مريح للعين <span class="status good">ممتاز</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Majors with Courses -->
+        <h2 style="margin: 30px 0 20px; color: #667eea;">التخصصات والمواد (اضغط لعرض المواد)</h2>
+        <div class="majors-grid" id="majors-container"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/majors-data.js"></script>
+    <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('mode-icon').textContent = isDark ? '☀️' : '🌙';
+            document.getElementById('mode-text').textContent = isDark ? ' تبديل الوضع المضيء' : ' تبديل الوضع الداكن';
+            localStorage.setItem('dark-mode-test', isDark);
+        }
+
+        // Check saved preference
+        if (localStorage.getItem('dark-mode-test') === 'true') {
+            toggleDarkMode();
+        }
+
+        // Load Majors and Courses
+        function loadMajors() {
+            const container = document.getElementById('majors-container');
+            const majors = getAllMajors();
+
+            majors.forEach(major => {
+                const majorData = MAJORS_DATA[major.id];
+                const card = document.createElement('div');
+                card.className = 'major-card';
+                card.innerHTML = `
+                    <h3>${major.name_ar}</h3>
+                    <p class="college">${major.college_ar}</p>
+                    <p><strong>${majorData.courses.length} مادة</strong></p>
+                    <div class="courses-list">
+                        ${majorData.courses.map(course => `
+                            <div class="course-item">
+                                <span class="course-code">${course.code}</span>
+                                <span class="course-name">${course.name_ar}</span>
+                                <span class="course-difficulty">${'⭐'.repeat(course.difficulty_level)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    card.classList.toggle('expanded');
+                });
+
+                container.appendChild(card);
+            });
+
+            // Update stats
+            let totalCourses = 0;
+            Object.values(MAJORS_DATA).forEach(major => {
+                totalCourses += major.courses.length;
+            });
+            document.getElementById('total-courses').textContent = totalCourses;
+        }
+
+        window.addEventListener('DOMContentLoaded', loadMajors);
+    </script>
+</body>
+</html>

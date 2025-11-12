@@ -1,0 +1,167 @@
+// UI Helper Functions
+const UI = {
+    // Show/hide loading
+    showLoading() {
+        document.getElementById('loading').classList.remove('hidden');
+    },
+
+    hideLoading() {
+        document.getElementById('loading').classList.add('hidden');
+    },
+
+    // Show toast notification
+    showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+
+        toast.innerHTML = `
+            <span class="toast-icon">${icons[type] || icons.info}</span>
+            <span>${message}</span>
+        `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    },
+
+    // Show/hide page
+    showPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+        document.getElementById(pageId).classList.add('active');
+
+        // Update nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.page === pageId.replace('-page', '')) {
+                link.classList.add('active');
+            }
+        });
+
+        // Hide navbar on auth pages
+        const navbar = document.getElementById('navbar');
+        if (pageId === 'login-page' || pageId === 'register-page') {
+            navbar.classList.add('hidden');
+        } else {
+            navbar.classList.remove('hidden');
+        }
+    },
+
+    // Format date
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ar-SA', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    },
+
+    // Format time
+    formatTime(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        if (hours > 0) {
+            return `${hours} ساعة${mins > 0 ? ` و ${mins} دقيقة` : ''}`;
+        }
+        return `${mins} دقيقة`;
+    },
+
+    // Get session type label
+    getSessionTypeLabel(type) {
+        const labels = {
+            review: 'مراجعة',
+            intensive: 'مكثفة',
+            exam_prep: 'تحضير للاختبار',
+            light_review: 'مراجعة خفيفة'
+        };
+        return labels[type] || type;
+    },
+
+    // Calculate days until date
+    daysUntil(date) {
+        const today = new Date();
+        const target = new Date(date);
+        const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+        return diff;
+    },
+
+    // Modal functions
+    showModal(modalId) {
+        document.getElementById(modalId).classList.add('active');
+    },
+
+    hideModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    },
+
+    // Confirm dialog
+    confirm(title, message, onConfirm, onCancel) {
+        // إنشاء مودال للتأكيد
+        const existingModal = document.getElementById('confirm-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        const modal = document.createElement('div');
+        modal.id = 'confirm-modal';
+        modal.className = 'modal active';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h2>${title}</h2>
+                    <button class="close-btn" onclick="document.getElementById('confirm-modal').remove()">×</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 16px; line-height: 1.8; color: #333;">${message}</p>
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button id="confirm-cancel-btn" class="btn btn-secondary">إلغاء</button>
+                    <button id="confirm-ok-btn" class="btn btn-primary">نعم، تأكيد</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // إضافة أحداث الأزرار
+        document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+            modal.remove();
+            if (onConfirm) onConfirm();
+        });
+
+        document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
+            modal.remove();
+            if (onCancel) onCancel();
+        });
+
+        // إغلاق عند الضغط خارج المحتوى
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+                if (onCancel) onCancel();
+            }
+        });
+    }
+};
+
+// Add slideOut animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideOut {
+        to { transform: translateX(-100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);

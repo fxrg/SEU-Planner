@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار SEU Planner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .status {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+        .check-item .label { font-weight: 500; }
+        .check-item .result { font-size: 1.5rem; }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #5568d3; transform: translateY(-2px); }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 10px;
+            display: none;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 SEU Planner</h1>
+        <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 30px;">
+            اختبار سريع للتأكد من جاهزية التطبيق
+        </p>
+
+        <div class="status">
+            <div class="check-item">
+                <span class="label">📄 ملف HTML</span>
+                <span class="result" id="html-check">⏳</span>
+            </div>
+            <div class="check-item">
+                <span class="label">🎨 ملف CSS</span>
+                <span class="result" id="css-check">⏳</span>
+            </div>
+            <div class="check-item">
+                <span class="label">⚙️ ملفات JavaScript</span>
+                <span class="result" id="js-check">⏳</span>
+            </div>
+            <div class="check-item">
+                <span class="label">🔥 Firebase (اختياري)</span>
+                <span class="result" id="firebase-check">⏳</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="runTests()">🧪 اختبار الآن</button>
+        <button class="btn btn-success" onclick="openApp()" style="display: none;" id="open-btn">
+            🚀 افتح التطبيق
+        </button>
+
+        <div id="result"></div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e9ecef;">
+            <p style="color: #6c757d;">
+                💡 <strong>نصيحة:</strong> إذا واجهتك مشاكل، راجع ملف 
+                <a href="START.md" style="color: #667eea;">START.md</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function runTests() {
+            document.getElementById('result').style.display = 'none';
+            
+            // Test 1: HTML
+            try {
+                const htmlResponse = await fetch('index.html');
+                document.getElementById('html-check').textContent = htmlResponse.ok ? '✅' : '❌';
+            } catch {
+                document.getElementById('html-check').textContent = '❌';
+            }
+
+            // Test 2: CSS
+            try {
+                const cssResponse = await fetch('style.css');
+                document.getElementById('css-check').textContent = cssResponse.ok ? '✅' : '❌';
+            } catch {
+                document.getElementById('css-check').textContent = '❌';
+            }
+
+            // Test 3: JavaScript files
+            try {
+                const jsFiles = ['config.js', 'majors-data.js', 'api.js', 'auth.js', 'ui.js', 'app.js'];
+                let allOk = true;
+                for (const file of jsFiles) {
+                    const response = await fetch(`js/${file}`);
+                    if (!response.ok) allOk = false;
+                }
+                document.getElementById('js-check').textContent = allOk ? '✅' : '❌';
+            } catch {
+                document.getElementById('js-check').textContent = '❌';
+            }
+
+            // Test 4: Firebase (optional)
+            try {
+                const configResponse = await fetch('js/config.js');
+                const configText = await configResponse.text();
+                const hasFirebase = configText.includes('apiKey') && !configText.includes('AIzaSyDemoKey');
+                document.getElementById('firebase-check').textContent = hasFirebase ? '✅' : '⚠️';
+            } catch {
+                document.getElementById('firebase-check').textContent = '⚠️';
+            }
+
+            // Show result
+            setTimeout(() => {
+                const allChecks = document.querySelectorAll('.result');
+                const allPassed = Array.from(allChecks).every(el => el.textContent === '✅' || el.textContent === '⚠️');
+                
+                const resultDiv = document.getElementById('result');
+                resultDiv.style.display = 'block';
+                
+                if (allPassed) {
+                    resultDiv.innerHTML = `
+                        <h3 class="success">✅ كل شيء جاهز!</h3>
+                        <p>يمكنك الآن فتح التطبيق والبدء في الاستخدام.</p>
+                        <p style="margin-top: 10px; color: #6c757d;">
+                            ⚠️ إذا كان Firebase يظهر ⚠️، يمكنك استخدام Backend بدلاً منه
+                        </p>
+                    `;
+                    document.getElementById('open-btn').style.display = 'inline-block';
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3 class="error">❌ هناك ملفات ناقصة</h3>
+                        <p>تأكد من وجود جميع الملفات في المجلد الصحيح</p>
+                        <p style="margin-top: 10px;">راجع <a href="START.md">START.md</a> للمساعدة</p>
+                    `;
+                }
+            }, 500);
+        }
+
+        function openApp() {
+            window.location.href = 'index.html';
+        }
+
+        // Auto-run on load
+        setTimeout(runTests, 500);
+    </script>
+</body>
+</html>

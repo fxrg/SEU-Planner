@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .test-btn { padding: 15px 30px; font-size: 18px; background: #0066cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .test-btn:hover { background: #0052a3; }
+        pre { background: #fff; padding: 15px; border-radius: 5px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>اختبار Dashboard</h1>
+    
+    <button class="test-btn" onclick="testDashboard()">اختبار Dashboard ✅</button>
+    
+    <div id="result"></div>
+
+    <!-- Load scripts -->
+    <script src="frontend/js/config.js"></script>
+    <script src="frontend/js/majors-data.js"></script>
+    <script src="frontend/js/ui.js"></script>
+    <script src="frontend/js/auth.js"></script>
+    <script src="frontend/js/dashboard.js"></script>
+
+    <script>
+        function testDashboard() {
+            const result = document.getElementById('result');
+            let html = '<pre><strong>نتائج الاختبار:</strong>\n\n';
+            
+            // Test 1: Check if Dashboard exists
+            html += '1. Dashboard object: ' + (typeof Dashboard !== 'undefined' ? '✅ موجود' : '❌ غير موجود') + '\n';
+            
+            // Test 2: Check methods
+            if (typeof Dashboard !== 'undefined') {
+                html += '2. Dashboard methods:\n';
+                Object.keys(Dashboard).forEach(key => {
+                    html += `   - ${key}: ${typeof Dashboard[key]}\n`;
+                });
+                
+                // Test 3: Check if showCourseSelector exists
+                html += '\n3. showCourseSelector: ' + (typeof Dashboard.showCourseSelector === 'function' ? '✅ موجودة' : '❌ غير موجودة') + '\n';
+                
+                // Test 4: Check if saveSelectedCourses exists
+                html += '4. saveSelectedCourses: ' + (typeof Dashboard.saveSelectedCourses === 'function' ? '✅ موجودة' : '❌ غير موجودة') + '\n';
+                
+                // Test 5: Check MAJORS_DATA
+                html += '\n5. MAJORS_DATA: ' + (typeof MAJORS_DATA !== 'undefined' ? '✅ موجود' : '❌ غير موجود') + '\n';
+                if (typeof MAJORS_DATA !== 'undefined') {
+                    html += '   عدد التخصصات: ' + Object.keys(MAJORS_DATA).length + '\n';
+                    html += '   التخصصات: ' + Object.keys(MAJORS_DATA).join(', ') + '\n';
+                }
+            }
+            
+            html += '</pre>';
+            result.innerHTML = html;
+        }
+        
+        // Auto test on load
+        window.addEventListener('load', () => {
+            setTimeout(testDashboard, 500);
+        });
+    </script>
+</body>
+</html>

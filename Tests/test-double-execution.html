@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار التنفيذ المزدوج</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .log {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.warning {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 اختبار التنفيذ المزدوج</h1>
+
+    <div class="test-box">
+        <h2>اختبار 1: زر عادي</h2>
+        <button id="normal-btn">اضغط هنا</button>
+        <p>عدد الضغطات: <strong id="normal-count">0</strong></p>
+    </div>
+
+    <div class="test-box">
+        <h2>اختبار 2: زر مع منع التنفيذ المزدوج</h2>
+        <button id="protected-btn">اضغط هنا (محمي)</button>
+        <p>عدد الضغطات: <strong id="protected-count">0</strong></p>
+    </div>
+
+    <div class="test-box">
+        <h2>اختبار 3: نموذج Form</h2>
+        <form id="test-form">
+            <input type="text" placeholder="اكتب شيء..." required>
+            <button type="submit">إرسال</button>
+        </form>
+        <p>عدد الإرسالات: <strong id="form-count">0</strong></p>
+    </div>
+
+    <div class="test-box">
+        <h2>سجل الأحداث</h2>
+        <div class="log" id="event-log"></div>
+        <button onclick="clearLog()">مسح السجل</button>
+    </div>
+
+    <script>
+        let normalCount = 0;
+        let protectedCount = 0;
+        let formCount = 0;
+        let isProcessing = false;
+
+        function logEvent(message, type = 'success') {
+            const log = document.getElementById('event-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString('ar-SA');
+            entry.textContent = `[${time}] ${message}`;
+            log.insertBefore(entry, log.firstChild);
+        }
+
+        function clearLog() {
+            document.getElementById('event-log').innerHTML = '';
+            logEvent('تم مسح السجل', 'warning');
+        }
+
+        // اختبار 1: زر عادي (بدون حماية)
+        document.getElementById('normal-btn').addEventListener('click', () => {
+            normalCount++;
+            document.getElementById('normal-count').textContent = normalCount;
+            logEvent(`زر عادي: ضغطة رقم ${normalCount}`, 'success');
+        });
+
+        // اختبار 2: زر محمي
+        document.getElementById('protected-btn').addEventListener('click', async () => {
+            if (isProcessing) {
+                logEvent('⚠️ محاولة تنفيذ مزدوج! تم المنع', 'error');
+                return;
+            }
+
+            isProcessing = true;
+            protectedCount++;
+            document.getElementById('protected-count').textContent = protectedCount;
+            logEvent(`✅ زر محمي: ضغطة رقم ${protectedCount}`, 'success');
+
+            // محاكاة عملية تستغرق وقت
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            isProcessing = false;
+            logEvent('✔️ انتهت العملية، يمكن الضغط مرة أخرى', 'success');
+        });
+
+        // اختبار 3: نموذج
+        let formProcessing = false;
+        document.getElementById('test-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (formProcessing) {
+                logEvent('⚠️ النموذج قيد المعالجة! تم المنع', 'error');
+                return;
+            }
+
+            formProcessing = true;
+            formCount++;
+            document.getElementById('form-count').textContent = formCount;
+            logEvent(`📝 نموذج: إرسال رقم ${formCount}`, 'success');
+
+            // محاكاة عملية
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            formProcessing = false;
+            logEvent('✔️ تم معالجة النموذج', 'success');
+            e.target.reset();
+        });
+
+        // سجل بدء الاختبار
+        logEvent('🚀 بدأ اختبار التنفيذ المزدوج', 'warning');
+    </script>
+</body>
+</html>

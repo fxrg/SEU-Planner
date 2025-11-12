@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار التحميل - SEU Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .pending { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>🧪 اختبار تحميل الملفات</h1>
+    
+    <div class="test-box">
+        <h2>حالة التحميل:</h2>
+        <p id="config-status" class="pending">⏳ Config.js</p>
+        <p id="majors-status" class="pending">⏳ Majors-data.js</p>
+        <p id="ui-status" class="pending">⏳ UI.js</p>
+        <p id="auth-status" class="pending">⏳ Auth.js</p>
+        <p id="dashboard-status" class="pending">⏳ Dashboard.js</p>
+    </div>
+
+    <div class="test-box">
+        <h2>اختبار الوظائف:</h2>
+        <button onclick="testMajors()" style="padding: 10px 20px; margin: 5px;">اختبر Majors</button>
+        <button onclick="testUI()" style="padding: 10px 20px; margin: 5px;">اختبر UI</button>
+        <button onclick="testAuth()" style="padding: 10px 20px; margin: 5px;">اختبر Auth</button>
+        <button onclick="testDashboard()" style="padding: 10px 20px; margin: 5px;">اختبر Dashboard</button>
+        <div id="test-results" style="margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px;"></div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="frontend/js/config.js"></script>
+    <script src="frontend/js/majors-data.js"></script>
+    <script src="frontend/js/ui.js"></script>
+    <script src="frontend/js/auth.js"></script>
+    <script src="frontend/js/dashboard.js"></script>
+    
+    <script>
+        function updateStatus(id, status, message) {
+            const el = document.getElementById(id);
+            el.className = status;
+            el.textContent = (status === 'success' ? '✅ ' : '❌ ') + message;
+        }
+
+        // Check if scripts loaded
+        setTimeout(() => {
+            updateStatus('config-status', 
+                typeof TOKEN_KEY !== 'undefined' ? 'success' : 'error',
+                typeof TOKEN_KEY !== 'undefined' ? 'Config.js تم التحميل' : 'Config.js فشل التحميل'
+            );
+
+            updateStatus('majors-status', 
+                typeof MAJORS_DATA !== 'undefined' ? 'success' : 'error',
+                typeof MAJORS_DATA !== 'undefined' ? `Majors-data.js تم التحميل (${Object.keys(MAJORS_DATA || {}).length} تخصصات)` : 'Majors-data.js فشل التحميل'
+            );
+
+            updateStatus('ui-status', 
+                typeof UI !== 'undefined' ? 'success' : 'error',
+                typeof UI !== 'undefined' ? 'UI.js تم التحميل' : 'UI.js فشل التحميل'
+            );
+
+            updateStatus('auth-status', 
+                typeof Auth !== 'undefined' ? 'success' : 'error',
+                typeof Auth !== 'undefined' ? 'Auth.js تم التحميل' : 'Auth.js فشل التحميل'
+            );
+
+            updateStatus('dashboard-status', 
+                typeof Dashboard !== 'undefined' ? 'success' : 'error',
+                typeof Dashboard !== 'undefined' ? 'Dashboard.js تم التحميل' : 'Dashboard.js فشل التحميل'
+            );
+        }, 500);
+
+        function testMajors() {
+            const results = document.getElementById('test-results');
+            if (typeof MAJORS_DATA === 'undefined') {
+                results.innerHTML = '<p class="error">❌ MAJORS_DATA غير معرّف</p>';
+                return;
+            }
+            
+            const majors = getAllMajors();
+            results.innerHTML = `
+                <p class="success">✅ عدد التخصصات: ${majors.length}</p>
+                <p>التخصصات: ${majors.map(m => m.name_ar).join(', ')}</p>
+            `;
+        }
+
+        function testUI() {
+            const results = document.getElementById('test-results');
+            if (typeof UI === 'undefined') {
+                results.innerHTML = '<p class="error">❌ UI غير معرّف</p>';
+                return;
+            }
+            
+            results.innerHTML = `
+                <p class="success">✅ UI محمّل بنجاح</p>
+                <p>الوظائف المتاحة: ${Object.keys(UI).join(', ')}</p>
+            `;
+        }
+
+        function testAuth() {
+            const results = document.getElementById('test-results');
+            if (typeof Auth === 'undefined') {
+                results.innerHTML = '<p class="error">❌ Auth غير معرّف</p>';
+                return;
+            }
+            
+            results.innerHTML = `
+                <p class="success">✅ Auth محمّل بنجاح</p>
+                <p>الوظائف المتاحة: ${Object.keys(Auth).join(', ')}</p>
+            `;
+        }
+
+        function testDashboard() {
+            const results = document.getElementById('test-results');
+            if (typeof Dashboard === 'undefined') {
+                results.innerHTML = '<p class="error">❌ Dashboard غير معرّف</p>';
+                return;
+            }
+            
+            results.innerHTML = `
+                <p class="success">✅ Dashboard محمّل بنجاح</p>
+                <p>الوظائف المتاحة: ${Object.keys(Dashboard).join(', ')}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

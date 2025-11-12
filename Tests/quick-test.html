@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار سريع - SEU Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .test-section h2 {
+            color: #0066cc;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .result.success {
+            border-left-color: #28a745;
+        }
+
+        .result.error {
+            border-left-color: #dc3545;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status.pass {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            padding: 3px 0;
+        }
+
+        .log-entry.success {
+            color: #4ec9b0;
+        }
+
+        .log-entry.error {
+            color: #f48771;
+        }
+
+        .log-entry.warning {
+            color: #dcdcaa;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 اختبار سريع</h1>
+        <p class="subtitle">تحقق من عمل جميع الوظائف بدون تكرار</p>
+
+        <div class="test-section">
+            <h2>✅ الاختبار 1: زر بسيط</h2>
+            <button id="simple-btn">اضغط هنا</button>
+            <div class="result" id="simple-result" style="display: none;">
+                عدد الضغطات: <strong id="simple-count">0</strong>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🛡️ الاختبار 2: زر محمي</h2>
+            <button id="protected-btn">اضغط هنا (محمي)</button>
+            <div class="result" id="protected-result" style="display: none;">
+                عدد التنفيذات: <strong id="protected-count">0</strong>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 الاختبار 3: نموذج</h2>
+            <form id="test-form">
+                <button type="submit">إرسال النموذج</button>
+            </form>
+            <div class="result" id="form-result" style="display: none;">
+                عدد الإرسالات: <strong id="form-count">0</strong>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 ملخص النتائج</h2>
+            <div id="summary">
+                <div>الاختبار 1: <span class="status" id="test1-status">-</span></div>
+                <div>الاختبار 2: <span class="status" id="test2-status">-</span></div>
+                <div>الاختبار 3: <span class="status" id="test3-status">-</span></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 سجل الأحداث</h2>
+            <div class="log" id="event-log"></div>
+            <button class="clear-btn" onclick="clearLog()">مسح السجل</button>
+        </div>
+    </div>
+
+    <script>
+        let simpleCount = 0;
+        let protectedCount = 0;
+        let formCount = 0;
+        let isProcessing = false;
+
+        function logEvent(message, type = 'success') {
+            const log = document.getElementById('event-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString('ar-SA');
+            entry.textContent = `[${time}] ${message}`;
+            log.insertBefore(entry, log.firstChild);
+        }
+
+        function clearLog() {
+            document.getElementById('event-log').innerHTML = '';
+            logEvent('🔄 تم مسح السجل', 'warning');
+        }
+
+        function updateTestStatus(testNum, status) {
+            const statusEl = document.getElementById(`test${testNum}-status`);
+            statusEl.textContent = status === 'pass' ? '✓ نجح' : '✗ فشل';
+            statusEl.className = 'status ' + status;
+        }
+
+        // الاختبار 1: زر بسيط
+        document.getElementById('simple-btn').addEventListener('click', () => {
+            simpleCount++;
+            document.getElementById('simple-count').textContent = simpleCount;
+            document.getElementById('simple-result').style.display = 'block';
+            logEvent(`✅ زر بسيط: ضغطة رقم ${simpleCount}`, 'success');
+            
+            if (simpleCount === 1) {
+                updateTestStatus(1, 'pass');
+            }
+        });
+
+        // الاختبار 2: زر محمي
+        const protectedBtn = document.getElementById('protected-btn');
+        protectedBtn.addEventListener('click', async () => {
+            if (isProcessing) {
+                logEvent('⚠️ محاولة تنفيذ مزدوج! تم المنع', 'error');
+                updateTestStatus(2, 'fail');
+                return;
+            }
+
+            isProcessing = true;
+            protectedBtn.disabled = true;
+            protectedCount++;
+            
+            document.getElementById('protected-count').textContent = protectedCount;
+            document.getElementById('protected-result').style.display = 'block';
+            logEvent(`✅ زر محمي: تنفيذ رقم ${protectedCount}`, 'success');
+
+            // محاكاة عملية تستغرق وقت
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            isProcessing = false;
+            protectedBtn.disabled = false;
+            logEvent('✔️ انتهت العملية', 'success');
+            
+            if (protectedCount === 1) {
+                updateTestStatus(2, 'pass');
+            }
+        });
+
+        // الاختبار 3: نموذج
+        let formProcessing = false;
+        document.getElementById('test-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (formProcessing) {
+                logEvent('⚠️ النموذج قيد المعالجة! تم المنع', 'error');
+                updateTestStatus(3, 'fail');
+                return;
+            }
+
+            formProcessing = true;
+            formCount++;
+            
+            document.getElementById('form-count').textContent = formCount;
+            document.getElementById('form-result').style.display = 'block';
+            logEvent(`📝 نموذج: إرسال رقم ${formCount}`, 'success');
+
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            formProcessing = false;
+            logEvent('✔️ تم معالجة النموذج', 'success');
+            
+            if (formCount === 1) {
+                updateTestStatus(3, 'pass');
+            }
+        });
+
+        // سجل بدء الاختبار
+        logEvent('🚀 بدأ الاختبار - اضغط الأزرار بسرعة لاختبار التكرار', 'warning');
+    </script>
+</body>
+</html>

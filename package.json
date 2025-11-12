@@ -1,0 +1,24 @@
+{
+  "name": "seu-planner",
+  "version": "1.0.0",
+  "description": "Saudi Electronic University Study Planner - مخطط دراسي للجامعة السعودية الإلكترونية",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "setup": "cd backend && npm install",
+    "dev": "cd backend && npm run dev",
+    "migrate": "cd backend && npm run migrate",
+    "seed": "cd backend && npm run seed",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

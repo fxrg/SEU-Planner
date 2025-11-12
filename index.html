@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEU Planner - مخطط دراسي للجامعة السعودية الإلكترونية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="frontend/css/auth.css">
+    <link rel="stylesheet" href="frontend/css/dashboard.css">
+    <link rel="stylesheet" href="frontend/css/calendar.css">
+    <link rel="stylesheet" href="frontend/css/planner.css">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar hidden">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>📚 SEU Planner</h1>
+            </div>
+            
+            <!-- Dark Mode Toggle -->
+            <button id="dark-mode-toggle" class="dark-mode-btn" title="تبديل الوضع الداكن">
+                <span class="icon-light">🌙</span>
+                <span class="icon-dark">☀️</span>
+            </button>
+            
+            <div class="nav-links">
+                <a href="#" data-page="dashboard" class="nav-link active">
+                    <span class="icon">🏠</span>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="#" data-page="calendar" class="nav-link">
+                    <span class="icon">📅</span>
+                    <span>التقويم</span>
+                </a>
+                <a href="#" data-page="notifications" class="nav-link">
+                    <span class="icon">🔔</span>
+                    <span>الإشعارات</span>
+                    <span class="badge" id="notif-badge">0</span>
+                </a>
+                <a href="#" data-page="settings" class="nav-link">
+                    <span class="icon">⚙️</span>
+                    <span>الإعدادات</span>
+                </a>
+                <a href="#" id="logout-btn" class="nav-link">
+                    <span class="icon">🚪</span>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </div>
+            <div class="nav-user">
+                <span id="user-name">المستخدم</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="app">
+        <!-- Login Page -->
+        <div id="login-page" class="page active">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>📚 SEU Planner</h1>
+                        <p>مخطط دراسي للجامعة السعودية الإلكترونية</p>
+                    </div>
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-email">البريد الإلكتروني</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">كلمة المرور</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            تسجيل الدخول
+                        </button>
+                    </form>
+                    <div class="auth-footer">
+                        <p>ليس لديك حساب؟ <a href="#" id="show-register">سجل الآن</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Page -->
+        <div id="register-page" class="page">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>إنشاء حساب جديد</h1>
+                    </div>
+                    <form id="register-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="reg-name">الاسم الكامل</label>
+                            <input type="text" id="reg-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">البريد الإلكتروني</label>
+                            <input type="email" id="reg-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">كلمة المرور</label>
+                            <input type="password" id="reg-password" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-major">التخصص</label>
+                            <select id="reg-major" required>
+                                <option value="">اختر التخصص...</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            إنشاء حساب
+                        </button>
+                    </form>
+                    <div class="auth-footer">
+                        <p>لديك حساب؟ <a href="#" id="show-login">تسجيل الدخول</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>لوحة التحكم</h2>
+                    <div class="countdown-container">
+                        <div class="countdown-box">
+                            <span class="countdown-icon">⏰</span>
+                            <div>
+                                <div class="countdown-label">باقي على الاختبارات النهائية</div>
+                                <div class="countdown-value" id="exam-countdown">32 يوم</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📖</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-sessions">0</div>
+                            <div class="stat-label">إجمالي الجلسات</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="completed-sessions">0</div>
+                            <div class="stat-label">جلسات مكتملة</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="study-hours">0</div>
+                            <div class="stat-label">ساعات دراسة</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="progress-percent">0%</div>
+                            <div class="stat-label">نسبة الإنجاز</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Sessions -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>📅 جلسات اليوم</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-sm btn-primary" id="refresh-today">تحديث</button>
+                            <button class="btn btn-sm btn-danger" id="delete-plan" style="background: #dc3545;">حذف الخطة</button>
+                        </div>
+                    </div>
+                    <div id="today-sessions" class="sessions-list">
+                        <div class="empty-state">
+                            <span class="empty-icon">📚</span>
+                            <p>لا توجد جلسات اليوم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Plan Section -->
+                <div id="no-plan-section" class="section hidden">
+                    <div class="empty-state">
+                        <span class="empty-icon">📋</span>
+                        <h3>لا توجد خطة دراسية</h3>
+                        <p>أنشئ خطتك الدراسية لبدء رحلة النجاح!</p>
+                        <button class="btn btn-primary" id="show-plan-generator">
+                            إنشاء خطة دراسية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Page -->
+        <div id="calendar-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>📅 التقويم الدراسي</h2>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="btn btn-sm" id="prev-week">السابق</button>
+                        <h3 id="calendar-title">الأسبوع الحالي</h3>
+                        <button class="btn btn-sm" id="next-week">التالي</button>
+                    </div>
+                    <div id="calendar-grid" class="calendar-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Page -->
+        <div id="notifications-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>🔔 الإشعارات</h2>
+                    <button class="btn btn-sm" id="mark-all-read">تحديد الكل كمقروء</button>
+                </div>
+                <div id="notifications-list" class="notifications-list"></div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>⚙️ الإعدادات</h2>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-section">
+                        <h3>معلومات الحساب</h3>
+                        <form id="profile-form" class="form">
+                            <div class="form-group">
+                                <label>الاسم الكامل</label>
+                                <input type="text" id="profile-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>البريد الإلكتروني</label>
+                                <input type="email" id="profile-email" disabled>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                        </form>
+                    </div>
+                    <div class="settings-section">
+                        <h3>تفضيلات الإشعارات</h3>
+                        <form id="notif-form" class="form">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="notif-enabled">
+                                    تفعيل الإشعارات اليومية
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>وقت الإشعار</label>
+                                <input type="time" id="notif-time" value="07:00">
+                            </div>
+                            <div class="form-group">
+                                <label>كثافة الدراسة</label>
+                                <select id="study-intensity">
+                                    <option value="light">خفيف - ساعتان يومياً (جلسة واحدة)</option>
+                                    <option value="medium" selected>متوسط - 4 ساعات يومياً (جلستان)</option>
+                                    <option value="intensive">مكثف - 6 ساعات يومياً (3 جلسات)</option>
+                                </select>
+                                <small style="display: block; margin-top: 8px; color: #666;">
+                                    ℹ️ تغيير الكثافة سيؤدي لإعادة توليد الخطة الدراسية بالكامل
+                                </small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ التفضيلات</button>
+                        </form>
+                    </div>
+                    <div class="settings-section">
+                        <h3>تفضيلات التقويم</h3>
+                        <form id="calendar-form" class="form">
+                            <div class="form-group">
+                                <label>نوع التقويم</label>
+                                <select id="calendar-type">
+                                    <option value="gregorian" selected>ميلادي (Gregorian)</option>
+                                    <option value="hijri">هجري (Hijri)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="show-both-dates">
+                                    عرض التاريخين معاً
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ التفضيلات</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Plan Generator Modal -->
+    <div id="plan-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إنشاء خطة دراسية</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="plan-form">
+                    <div class="form-group">
+                        <label>اختر المواد:</label>
+                        <div id="courses-list" class="courses-list"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>الترم:</label>
+                        <select id="plan-term" required>
+                            <option value="1">الترم الأول (2025-2026)</option>
+                            <option value="2" disabled>الترم الثاني (مغلق حتى 11 يناير 2026)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        إنشاء الخطة
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts - تحميل الملفات بالترتيب الصحيح -->
+    <script src="frontend/js/config.js?v=3"></script>
+    <script src="frontend/js/seu-complete-data.js?v=3"></script>
+    <script src="frontend/js/majors-data.js?v=3"></script>
+    <script src="frontend/js/dark-mode.js?v=3"></script>
+    <script src="frontend/js/api.js?v=3"></script>
+    <script src="frontend/js/ui.js?v=3"></script>
+    <script src="frontend/js/auth.js?v=3"></script>
+    <script src="frontend/js/study-planner.js?v=3"></script>
+    <script src="frontend/js/dashboard.js?v=3"></script>
+    <script src="frontend/js/calendar.js?v=3"></script>
+    <script src="frontend/js/notifications.js?v=3"></script>
+    <script src="frontend/js/settings.js?v=3"></script>
+    <script src="frontend/js/app.js?v=3"></script>
+</body>
+</html>

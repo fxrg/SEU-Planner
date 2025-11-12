@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار التخصصات - SEU Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e7f3ff;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 اختبار نظام التسجيل</h1>
+        
+        <form id="test-form">
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="reg-name" value="محمد أحمد" required>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="reg-email" value="test@seu.edu.sa" required>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="reg-password" value="123456" required>
+            </div>
+
+            <div class="form-group">
+                <label>التخصص</label>
+                <select id="reg-major" required>
+                    <option value="">جاري التحميل...</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">إنشاء حساب تجريبي</button>
+        </form>
+
+        <div class="info">
+            <strong>ملاحظة:</strong> هذا اختبار للنظام. البيانات تحفظ محلياً في المتصفح فقط.
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/majors-data.js"></script>
+
+    <script>
+        // تحميل التخصصات عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMajors();
+            document.getElementById('test-form').addEventListener('submit', handleSubmit);
+        });
+
+        function loadMajors() {
+            const select = document.getElementById('reg-major');
+            
+            // تنظيف القائمة
+            select.innerHTML = '<option value="">اختر التخصص</option>';
+            
+            console.log('🔍 Loading majors...');
+            
+            if (typeof getAllMajors === 'function') {
+                const majors = getAllMajors();
+                console.log('✅ Found', majors.length, 'majors:', majors.map(m => m.name_ar).join(', '));
+                
+                majors.forEach((major, index) => {
+                    const option = document.createElement('option');
+                    option.value = major.id;
+                    option.textContent = `${major.name_ar} - ${major.college_ar}`;
+                    select.appendChild(option);
+                    console.log(`  ${index + 1}. ${major.name_ar} (ID: ${major.id})`);
+                });
+                
+                showStatus('تم تحميل ' + majors.length + ' تخصصات بنجاح', 'success');
+            } else {
+                console.error('❌ getAllMajors function not found!');
+                showStatus('خطأ: لم يتم العثور على بيانات التخصصات', 'error');
+            }
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const majorId = parseInt(document.getElementById('reg-major').value);
+
+            if (!majorId) {
+                showStatus('الرجاء اختيار التخصص', 'error');
+                return;
+            }
+
+            // حفظ المستخدم
+            const users = JSON.parse(localStorage.getItem('seu_users') || '[]');
+            
+            // التحقق من وجود البريد
+            if (users.some(u => u.email === email)) {
+                showStatus('البريد الإلكتروني مستخدم مسبقاً', 'error');
+                return;
+            }
+
+            const userData = {
+                id: Date.now(),
+                full_name: name,
+                email: email,
+                password: password,
+                major_id: majorId,
+                created_at: new Date().toISOString()
+            };
+
+            users.push(userData);
+            localStorage.setItem('seu_users', JSON.stringify(users));
+            
+            const majorName = document.getElementById('reg-major').selectedOptions[0].textContent;
+            showStatus('✅ تم إنشاء الحساب بنجاح!\n' + 
+                      'الاسم: ' + name + '\n' +
+                      'التخصص: ' + majorName, 'success');
+            
+            console.log('✅ User registered:', userData);
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.whiteSpace = 'pre-line';
+        }
+    </script>
+</body>
+</html>

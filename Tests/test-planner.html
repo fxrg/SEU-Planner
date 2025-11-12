@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار SEU Planner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 { color: #0066cc; }
+        h2 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
+        .result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0052a3; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 اختبار SEU Planner</h1>
+    
+    <div class="test-section">
+        <h2>1️⃣ اختبار تحميل البيانات</h2>
+        <button onclick="testDataLoading()">تشغيل الاختبار</button>
+        <div id="test1-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2️⃣ اختبار إنشاء خطة دراسية</h2>
+        <button onclick="testPlanGeneration()">تشغيل الاختبار</button>
+        <div id="test2-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3️⃣ اختبار الإشعارات</h2>
+        <button onclick="testNotifications()">تشغيل الاختبار</button>
+        <div id="test3-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4️⃣ اختبار التقويم</h2>
+        <button onclick="testCalendar()">تشغيل الاختبار</button>
+        <div id="test4-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5️⃣ اختبار الإحصائيات</h2>
+        <button onclick="testStats()">تشغيل الاختبار</button>
+        <div id="test5-results"></div>
+    </div>
+
+    <!-- Load all modules -->
+    <script src="frontend/js/config.js"></script>
+    <script src="frontend/js/seu-complete-data.js"></script>
+    <script src="frontend/js/majors-data.js"></script>
+    <script src="frontend/js/study-planner.js"></script>
+
+    <script>
+        function showResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = message;
+            container.appendChild(div);
+        }
+
+        function clearResults(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        // Test 1: Data Loading
+        function testDataLoading() {
+            clearResults('test1-results');
+            
+            try {
+                // Check if SEU_COMPLETE_DATA is loaded
+                if (typeof SEU_COMPLETE_DATA === 'undefined') {
+                    throw new Error('SEU_COMPLETE_DATA غير محمّل');
+                }
+                showResult('test1-results', '✓ تم تحميل SEU_COMPLETE_DATA', 'success');
+
+                // Check majors
+                const majorsCount = Object.keys(SEU_COMPLETE_DATA.majors).length;
+                showResult('test1-results', `✓ عدد التخصصات: ${majorsCount}`, 'success');
+
+                // Check courses
+                const coursesCount = Object.keys(SEU_COMPLETE_DATA.courses).length;
+                showResult('test1-results', `✓ عدد المقررات: ${coursesCount}`, 'success');
+
+                // Check terms
+                showResult('test1-results', `✓ الترم الأول مفتوح: ${SEU_COMPLETE_DATA.terms.term1.is_open}`, 'success');
+                showResult('test1-results', `✓ الترم الثاني مفتوح: ${SEU_COMPLETE_DATA.terms.term2.is_open}`, 'info');
+
+                // Sample courses
+                const sampleCourses = ['ENG001', 'CS001', 'MATH001', 'ISLM101'];
+                const found = sampleCourses.filter(code => SEU_COMPLETE_DATA.courses[code]);
+                showResult('test1-results', `✓ مقررات العينة موجودة: ${found.length}/${sampleCourses.length}`, 'success');
+
+            } catch (error) {
+                showResult('test1-results', `✗ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 2: Plan Generation
+        function testPlanGeneration() {
+            clearResults('test2-results');
+            
+            try {
+                // Mock user and courses
+                const testCourses = [
+                    SEU_COMPLETE_DATA.courses['ENG001'],
+                    SEU_COMPLETE_DATA.courses['CS001'],
+                    SEU_COMPLETE_DATA.courses['MATH001'],
+                    SEU_COMPLETE_DATA.courses['ISLM101']
+                ];
+
+                showResult('test2-results', `📚 اختبار بـ ${testCourses.length} مواد`, 'info');
+
+                // Generate plan
+                const plan = StudyPlanner.generatePlan(testCourses, 1, 'medium');
+                
+                showResult('test2-results', `✓ تم إنشاء الخطة بنجاح`, 'success');
+                showResult('test2-results', `✓ إجمالي الجلسات: ${plan.total_sessions}`, 'success');
+                showResult('test2-results', `✓ ساعات الدراسة: ${plan.total_study_hours.toFixed(1)}`, 'success');
+                showResult('test2-results', `✓ الكثافة: ${plan.intensity}`, 'success');
+
+                // Check session types
+                const types = {};
+                plan.sessions.forEach(s => {
+                    types[s.session_type] = (types[s.session_type] || 0) + 1;
+                });
+                showResult('test2-results', `✓ أنواع الجلسات: ${JSON.stringify(types)}`, 'info');
+
+            } catch (error) {
+                showResult('test2-results', `✗ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 3: Notifications
+        function testNotifications() {
+            clearResults('test3-results');
+            
+            try {
+                // Check Notification API support
+                if (!('Notification' in window)) {
+                    throw new Error('المتصفح لا يدعم الإشعارات');
+                }
+                showResult('test3-results', '✓ المتصفح يدعم الإشعارات', 'success');
+
+                // Check permission
+                showResult('test3-results', `✓ إذن الإشعارات: ${Notification.permission}`, 'info');
+
+                // Check settings
+                const enabled = localStorage.getItem(NOTIFICATION_ENABLED_KEY);
+                const time = localStorage.getItem(NOTIFICATION_TIME_KEY);
+                showResult('test3-results', `✓ الإشعارات مفعلة: ${enabled === 'true' ? 'نعم' : 'لا'}`, 'info');
+                showResult('test3-results', `✓ الوقت: ${time || 'غير محدد'}`, 'info');
+
+                if (Notification.permission === 'granted') {
+                    showResult('test3-results', '✓ يمكن إرسال الإشعارات', 'success');
+                } else {
+                    showResult('test3-results', '⚠ يجب طلب الإذن أولاً', 'info');
+                }
+
+            } catch (error) {
+                showResult('test3-results', `✗ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 4: Calendar
+        function testCalendar() {
+            clearResults('test4-results');
+            
+            try {
+                const plan = StudyPlanner.getCurrentPlan();
+                
+                if (!plan) {
+                    showResult('test4-results', '⚠ لا توجد خطة حالية', 'info');
+                    showResult('test4-results', 'قم بتشغيل اختبار إنشاء الخطة أولاً', 'info');
+                    return;
+                }
+
+                // Test week sessions
+                const thisWeek = StudyPlanner.getWeekSessions(0);
+                const nextWeek = StudyPlanner.getWeekSessions(1);
+                
+                showResult('test4-results', `✓ جلسات هذا الأسبوع: ${thisWeek.length}`, 'success');
+                showResult('test4-results', `✓ جلسات الأسبوع القادم: ${nextWeek.length}`, 'success');
+
+                // Group by day
+                const byDay = {};
+                thisWeek.forEach(s => {
+                    const day = new Date(s.scheduled_date).getDay();
+                    byDay[day] = (byDay[day] || 0) + 1;
+                });
+                showResult('test4-results', `✓ توزيع الأيام: ${JSON.stringify(byDay)}`, 'info');
+
+            } catch (error) {
+                showResult('test4-results', `✗ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 5: Stats
+        function testStats() {
+            clearResults('test5-results');
+            
+            try {
+                const stats = StudyPlanner.getStats();
+                
+                showResult('test5-results', `✓ إجمالي الجلسات: ${stats.total_sessions}`, 'success');
+                showResult('test5-results', `✓ الجلسات المكتملة: ${stats.completed_sessions}`, 'success');
+                showResult('test5-results', `✓ ساعات الدراسة: ${Math.round(stats.total_study_minutes / 60)}`, 'success');
+                showResult('test5-results', `✓ نسبة الإنجاز: ${stats.completion_rate}%`, 'success');
+
+                if (stats.total_sessions === 0) {
+                    showResult('test5-results', '⚠ لا توجد خطة حالية', 'info');
+                } else {
+                    showResult('test5-results', '✓ الإحصائيات تعمل بشكل صحيح', 'success');
+                }
+
+            } catch (error) {
+                showResult('test5-results', `✗ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run test 1 on load
+        window.onload = function() {
+            testDataLoading();
+        };
+    </script>
+</body>
+</html>
