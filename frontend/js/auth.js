@@ -110,7 +110,11 @@ const Auth = {
                 password,
                 major_id: majorId
             });
-            UI.showToast('تم إنشاء الحساب بنجاح!', 'success');
+            
+            // رسالة نجاح مع توضيح طريقة الحفظ
+            const storageMode = API.useFirebase() ? 'تم حفظ الحساب في Firebase ☁️' : 'تم حفظ الحساب محلياً 💾 (لم يتم تفعيل Firebase)';
+            UI.showToast('تم إنشاء الحساب بنجاح! ' + storageMode, 'success');
+            
             UI.showPage('dashboard-page');
             await Dashboard.load();
         } catch (error) {

@@ -454,12 +454,23 @@
         <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
         <script>
-            // ضع إعدادات Firebase الخاصة بك هنا (يمكنك نسخها من لوحة Firebase)
-            window.FIREBASE_CONFIG = window.FIREBASE_CONFIG || null;
-            // مثال (استبدل القيم حسب مشروعك):
-            // window.FIREBASE_CONFIG = { apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "...", measurementId: "..." };
+            
+            
+            // ⚠️ إعداداتك من Firebase Console
+            window.FIREBASE_CONFIG = {
+                apiKey: "AIzaSyA2oY6ItciZBjRD6qASZ0xTx3G5HKE4_ro",
+                authDomain: "seu-planner.firebaseapp.com",
+                projectId: "seu-planner",
+                storageBucket: "seu-planner.firebasestorage.app",
+                messagingSenderId: "1040890051559",
+                appId: "1:1040890051559:web:b1ef6c49f284f4a589db42",
+                measurementId: "G-8PWYR81R97"
+            };
+            
+           
         </script>
         <script src="frontend/js/firebase-init.js?v=3"></script>
+        <script src="frontend/js/firebase-status.js?v=3"></script>
         <script src="frontend/js/config.js?v=3"></script>
     <script src="frontend/js/seu-complete-data.js?v=3"></script>
     <script src="frontend/js/majors-data.js?v=3"></script>
