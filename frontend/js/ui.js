@@ -9,12 +9,17 @@ const UI = {
         document.getElementById('loading').classList.add('hidden');
     },
 
-    // Show toast notification
+    // Show toast notification (single instance)
     showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
+
+        // Always keep a single toast visible
+        Array.from(container.querySelectorAll('.toast')).forEach(t => t.remove());
+        if (this._toastTimer) clearTimeout(this._toastTimer);
+
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
-        
+
         const icons = {
             success: '✅',
             error: '❌',
@@ -29,7 +34,7 @@ const UI = {
 
         container.appendChild(toast);
 
-        setTimeout(() => {
+        this._toastTimer = setTimeout(() => {
             toast.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
@@ -77,6 +82,19 @@ const UI = {
             return `${hours} ساعة${mins > 0 ? ` و ${mins} دقيقة` : ''}`;
         }
         return `${mins} دقيقة`;
+    },
+
+    // Format clock HH:MM -> 12h with AM/PM
+    formatClock(hhmm) {
+        if (!hhmm) return '';
+        try {
+            const [h, m] = hhmm.split(':').map(Number);
+            const period = h >= 12 ? 'PM' : 'AM';
+            const hour12 = ((h + 11) % 12) + 1; // 0 -> 12
+            return `${hour12.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${period}`;
+        } catch (e) {
+            return hhmm;
+        }
     },
 
     // Get session type label

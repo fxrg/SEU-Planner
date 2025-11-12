@@ -58,17 +58,20 @@ const Settings = {
         if (emailEl) emailEl.value = user.email || '';
 
         // Load notification preferences
-        const notifEnabled = localStorage.getItem(NOTIFICATION_ENABLED_KEY) === 'true';
-        const notifTime = localStorage.getItem(NOTIFICATION_TIME_KEY) || DEFAULT_NOTIFICATION_TIME;
-        const studyIntensity = localStorage.getItem(STUDY_INTENSITY_KEY) || 'medium';
+    const notifEnabled = localStorage.getItem(NOTIFICATION_ENABLED_KEY) === 'true';
+    const notifTime = localStorage.getItem(NOTIFICATION_TIME_KEY) || DEFAULT_NOTIFICATION_TIME;
+    const studyIntensity = localStorage.getItem(STUDY_INTENSITY_KEY) || 'medium';
+    const studyStartTime = localStorage.getItem(STUDY_START_TIME_KEY) || '09:00';
 
         const notifEnabledEl = document.getElementById('notif-enabled');
         const notifTimeEl = document.getElementById('notif-time');
-        const studyIntensityEl = document.getElementById('study-intensity');
+    const studyIntensityEl = document.getElementById('study-intensity');
+    const studyStartTimeEl = document.getElementById('study-start-time');
         
         if (notifEnabledEl) notifEnabledEl.checked = notifEnabled;
         if (notifTimeEl) notifTimeEl.value = notifTime;
-        if (studyIntensityEl) studyIntensityEl.value = studyIntensity;
+    if (studyIntensityEl) studyIntensityEl.value = studyIntensity;
+    if (studyStartTimeEl) studyStartTimeEl.value = studyStartTime;
 
         // Load calendar preferences
         const calendarType = localStorage.getItem('calendar_type') || 'gregorian';
@@ -103,9 +106,11 @@ const Settings = {
     },
 
     saveNotificationPreferences() {
-        const enabled = document.getElementById('notif-enabled').checked;
-        const time = document.getElementById('notif-time').value;
-        const intensity = document.getElementById('study-intensity').value;
+    const enabled = document.getElementById('notif-enabled').checked;
+    const time = document.getElementById('notif-time').value;
+    const intensity = document.getElementById('study-intensity').value;
+    const studyStartTime = document.getElementById('study-start-time').value || '09:00';
+    const oldStudyStart = localStorage.getItem(STUDY_START_TIME_KEY) || '09:00';
 
         if (enabled && Notification.permission !== 'granted') {
             UI.showToast('يجب السماح بالإشعارات للتفعيل', 'warning');
@@ -118,7 +123,8 @@ const Settings = {
 
         localStorage.setItem(NOTIFICATION_ENABLED_KEY, enabled.toString());
         localStorage.setItem(NOTIFICATION_TIME_KEY, time);
-        localStorage.setItem(STUDY_INTENSITY_KEY, intensity);
+    localStorage.setItem(STUDY_INTENSITY_KEY, intensity);
+    localStorage.setItem(STUDY_START_TIME_KEY, studyStartTime);
 
         if (enabled) {
             // Schedule daily notification check
@@ -132,26 +138,51 @@ const Settings = {
         if (oldIntensity !== intensity) {
             const plan = StudyPlanner.getCurrentPlan();
             if (plan) {
-                UI.confirm(
-                    'تغيير كثافة الدراسة',
-                    'تم تغيير كثافة الدراسة. هل تريد إعادة توليد الخطة الدراسية لتطبيق التغييرات؟',
-                    () => {
-                        // إعادة توليد الخطة
-                        try {
-                            StudyPlanner.generatePlan(plan.courses, plan.term_id, intensity);
-                            UI.showToast('✓ تم تحديث الخطة الدراسية بنجاح', 'success');
-                            
-                            // إعادة تحميل الصفحة الحالية
-                            if (document.getElementById('dashboard-page').classList.contains('active')) {
-                                Dashboard.load();
-                            } else if (document.getElementById('calendar-page').classList.contains('active')) {
-                                Calendar.load();
-                            }
-                        } catch (error) {
-                            UI.showToast('خطأ في تحديث الخطة: ' + error.message, 'error');
+                // على الجوال: طبّق مباشرة بدون نافذة تأكيد لسهولة الاستخدام
+                const isMobile = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+                const regenerate = () => {
+                    try {
+                        StudyPlanner.generatePlan(plan.courses, plan.term_id, intensity);
+                        UI.showToast('✓ تم تحديث الخطة الدراسية بنجاح', 'success');
+
+                        // أعد تحميل الصفحة النشطة
+                        if (document.getElementById('dashboard-page').classList.contains('active')) {
+                            Dashboard.load();
+                        } else if (document.getElementById('calendar-page').classList.contains('active')) {
+                            Calendar.load();
                         }
+
+                        // بث حدث عام ليستمع له باقي الأجزاء إن لزم
+                        window.dispatchEvent(new CustomEvent('settings:changed', {
+                            detail: { key: 'study_intensity', value: intensity }
+                        }));
+                    } catch (error) {
+                        UI.showToast('خطأ في تحديث الخطة: ' + error.message, 'error');
                     }
-                );
+                };
+
+                if (isMobile) {
+                    regenerate();
+                } else {
+                    UI.confirm(
+                        'تغيير كثافة الدراسة',
+                        'تم تغيير كثافة الدراسة. هل تريد إعادة توليد الخطة الدراسية لتطبيق التغييرات؟',
+                        regenerate
+                    );
+                }
+            }
+        }
+
+        // في حال تغيير وقت بداية الدراسة فقط، نعيد ضبط أوقات الجلسات بدون إعادة توليد الخطة
+        if (oldStudyStart !== studyStartTime) {
+            const updated = StudyPlanner.applyStudyStartTime();
+            if (updated) {
+                UI.showToast('✓ تم تحديث أوقات الجلسات حسب وقت البداية الجديد', 'success');
+                if (document.getElementById('dashboard-page').classList.contains('active')) {
+                    Dashboard.load();
+                } else if (document.getElementById('calendar-page').classList.contains('active')) {
+                    Calendar.load();
+                }
             }
         }
     },

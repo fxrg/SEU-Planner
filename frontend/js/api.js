@@ -1,5 +1,9 @@
-// API Helper Functions - OFFLINE MODE (No Backend Required)
+// API Helper Functions - OFFLINE by default, Firebase if available
 const API = {
+    // Whether Firebase auth is available
+    useFirebase() {
+        return !!(window.FIREBASE_ENABLED && window.firebase && firebase.auth);
+    },
     // Get token from localStorage
     getToken() {
         return localStorage.getItem(TOKEN_KEY);
@@ -11,9 +15,12 @@ const API = {
     },
 
     // Remove token
-    removeToken() {
+    async removeToken() {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
+        if (this.useFirebase()) {
+            try { await firebase.auth().signOut(); } catch (e) { console.warn(e); }
+        }
     },
 
     // Simulate async operations
@@ -21,74 +28,106 @@ const API = {
         return new Promise(resolve => setTimeout(resolve, ms));
     },
 
-    // Auth endpoints - LOCAL ONLY
+    // Auth endpoints - Firebase preferred, fallback to local
     async login(email, password) {
-        await this.delay();
-        
-        // Get all users
-        const users = JSON.parse(localStorage.getItem('seu_users') || '[]');
-        
-        // Find user
-        const user = users.find(u => u.email === email && u.password === password);
-        
-        if (!user) {
-            throw new Error('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+        if (this.useFirebase()) {
+            const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+            const user = cred.user;
+            const token = await user.getIdToken();
+            this.setToken(token);
+            const userData = {
+                id: user.uid,
+                email: user.email,
+                full_name: user.displayName || (user.email ? user.email.split('@')[0] : 'المستخدم'),
+                selected_courses: [],
+                current_plan: null,
+                major_id: (JSON.parse(localStorage.getItem(USER_KEY) || '{}').major_id) || null
+            };
+            localStorage.setItem(USER_KEY, JSON.stringify(userData));
+            return { success: true, data: { token, user: userData } };
+        } else {
+            await this.delay();
+            const users = JSON.parse(localStorage.getItem('seu_users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            if (!user) {
+                throw new Error('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+            }
+            const token = 'local_token_' + Date.now();
+            this.setToken(token);
+            const userData = { ...user };
+            delete userData.password;
+            localStorage.setItem(USER_KEY, JSON.stringify(userData));
+            return { success: true, data: { token, user: userData } };
         }
-        
-        // Generate token
-        const token = 'local_token_' + Date.now();
-        this.setToken(token);
-        
-        // Save current user
-        const userData = { ...user };
-        delete userData.password; // Don't store password in current user
-        localStorage.setItem(USER_KEY, JSON.stringify(userData));
-        
-        return { success: true, data: { token, user: userData } };
     },
 
     async register(userData) {
-        await this.delay();
-        
-        // Get all users
-        const users = JSON.parse(localStorage.getItem('seu_users') || '[]');
-        
-        // Check if email exists
-        if (users.find(u => u.email === userData.email)) {
-            throw new Error('البريد الإلكتروني مستخدم بالفعل');
+        if (this.useFirebase()) {
+            const cred = await firebase.auth().createUserWithEmailAndPassword(userData.email, userData.password);
+            const user = cred.user;
+            // set display name
+            if (userData.full_name) {
+                try { await user.updateProfile({ displayName: userData.full_name }); } catch (e) {}
+            }
+            const token = await user.getIdToken();
+            this.setToken(token);
+            const toSave = {
+                id: user.uid,
+                email: user.email,
+                full_name: userData.full_name || user.email.split('@')[0],
+                major_id: userData.major_id || null,
+                selected_courses: [],
+                current_plan: null,
+                created_at: new Date().toISOString()
+            };
+            localStorage.setItem(USER_KEY, JSON.stringify(toSave));
+            return { success: true, data: { token, user: toSave } };
+        } else {
+            await this.delay();
+            const users = JSON.parse(localStorage.getItem('seu_users') || '[]');
+            if (users.find(u => u.email === userData.email)) {
+                throw new Error('البريد الإلكتروني مستخدم بالفعل');
+            }
+            const newUser = {
+                id: Date.now(),
+                ...userData,
+                created_at: new Date().toISOString(),
+                selected_courses: [],
+                current_plan: null
+            };
+            users.push(newUser);
+            localStorage.setItem('seu_users', JSON.stringify(users));
+            const token = 'local_token_' + Date.now();
+            this.setToken(token);
+            const userToSave = { ...newUser };
+            delete userToSave.password;
+            localStorage.setItem(USER_KEY, JSON.stringify(userToSave));
+            return { success: true, data: { token, user: userToSave } };
         }
-        
-        // Create new user
-        const newUser = {
-            id: Date.now(),
-            ...userData,
-            created_at: new Date().toISOString(),
-            selected_courses: [],
-            current_plan: null
-        };
-        
-        // Save user
-        users.push(newUser);
-        localStorage.setItem('seu_users', JSON.stringify(users));
-        
-        // Generate token
-        const token = 'local_token_' + Date.now();
-        this.setToken(token);
-        
-        // Save current user
-        const userToSave = { ...newUser };
-        delete userToSave.password;
-        localStorage.setItem(USER_KEY, JSON.stringify(userToSave));
-        
-        return { success: true, data: { token, user: userToSave } };
     },
 
 
     async getMe() {
-        await this.delay();
-        const user = JSON.parse(localStorage.getItem(USER_KEY));
-        if (!user) throw new Error('غير مسجل');
-        return { success: true, data: user };
+        if (this.useFirebase()) {
+            const user = firebase.auth().currentUser;
+            if (!user) throw new Error('غير مسجل');
+            const localUser = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+            const data = {
+                id: user.uid,
+                email: user.email,
+                full_name: user.displayName || localUser.full_name || (user.email ? user.email.split('@')[0] : 'المستخدم'),
+                selected_courses: localUser.selected_courses || [],
+                current_plan: localUser.current_plan || null,
+                major_id: localUser.major_id || null
+            };
+            localStorage.setItem(USER_KEY, JSON.stringify(data));
+            return { success: true, data };
+        } else {
+            await this.delay();
+            const user = JSON.parse(localStorage.getItem(USER_KEY));
+            if (!user) throw new Error('غير مسجل');
+            return { success: true, data: user };
+        }
     },
 
     // Majors & Courses - From local data

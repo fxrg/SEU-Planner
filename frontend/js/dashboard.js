@@ -137,13 +137,21 @@ const Dashboard = {
             return;
         }
 
-        container.innerHTML = sessions.map(session => this.renderSession(session)).join('');
+    container.innerHTML = sessions.map(session => this.renderSession(session)).join('');
 
         // Add event listeners for complete buttons
         container.querySelectorAll('.complete-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.dataset.id);
                 this.toggleSession(id);
+            });
+        });
+
+        // Edit buttons
+        container.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.dataset.id);
+                this.openEditSession(id);
             });
         });
     },
@@ -169,7 +177,7 @@ const Dashboard = {
                         <span>⏱️ ${duration}</span>
                         <span>📖 ${type}</span>
                         <span>🔢 ${session.course_code}</span>
-                        <span>🕐 ${session.scheduled_time}</span>
+                        <span>🕐 ${UI.formatClock(session.scheduled_time)}</span>
                         ${isFinalReview ? '<span style="color: #ff5722; font-weight: bold;">⚠️ مراجعة نهائية</span>' : ''}
                     </div>
                     ${session.notes ? `<div class="session-notes" style="margin-top: 8px; color: ${isFinalReview ? '#ff5722' : '#666'}; font-size: 14px;">${session.notes}</div>` : ''}
@@ -180,9 +188,61 @@ const Dashboard = {
                             data-id="${session.id}">
                         ${completed ? 'مكتملة' : 'إتمام'}
                     </button>
+                    <button class="btn btn-sm btn-secondary edit-btn" data-id="${session.id}" title="تعديل">تعديل</button>
                 </div>
             </div>
         `;
+    },
+
+    openEditSession(sessionId) {
+        const plan = StudyPlanner.getCurrentPlan();
+        if (!plan) return;
+        const s = plan.sessions.find(x => x.id === sessionId);
+        if (!s) return;
+
+        const modalId = 'edit-session-modal';
+        const old = document.getElementById(modalId);
+        if (old) old.remove();
+
+        const html = `
+            <div class="modal active" id="${modalId}">
+              <div class="modal-content" style="max-width: 480px;">
+                <div class="modal-header">
+                    <h2>تعديل الجلسة</h2>
+                    <button class="close-btn" onclick="document.getElementById('${modalId}').remove()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>التاريخ</label>
+                        <input type="date" id="edit-session-date" value="${s.scheduled_date}">
+                    </div>
+                    <div class="form-group">
+                        <label>الوقت</label>
+                        <input type="time" id="edit-session-time" value="${s.scheduled_time}">
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظة</label>
+                        <input type="text" id="edit-session-notes" value="${s.notes || ''}">
+                    </div>
+                </div>
+                <div class="modal-footer" style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('${modalId}').remove()">إلغاء</button>
+                    <button class="btn btn-primary" id="save-session-edit">حفظ</button>
+                </div>
+              </div>
+            </div>`;
+
+        document.body.insertAdjacentHTML('beforeend', html);
+        document.getElementById('save-session-edit').addEventListener('click', () => {
+            const date = document.getElementById('edit-session-date').value;
+            const time = document.getElementById('edit-session-time').value;
+            const notes = document.getElementById('edit-session-notes').value;
+
+            StudyPlanner.updateSession(sessionId, { scheduled_date: date, scheduled_time: time, notes });
+            UI.showToast('تم حفظ التعديلات', 'success');
+            document.getElementById(modalId).remove();
+            this.loadTodaySessions();
+        });
     },
 
     toggleSession(id) {

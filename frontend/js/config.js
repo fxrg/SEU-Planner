@@ -18,3 +18,5 @@ const NOTIFICATION_TIME_KEY = 'seu_notification_time';
 const MIN_COURSES = 4; // الحد الأدنى للمواد
 const MAX_COURSES = 6; // الحد الأقصى للمواد
 const STUDY_INTENSITY_KEY = 'seu_study_intensity';
+// Study day preferences
+const STUDY_START_TIME_KEY = 'seu_study_start_time';

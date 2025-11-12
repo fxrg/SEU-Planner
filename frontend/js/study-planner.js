@@ -157,6 +157,9 @@ const StudyPlanner = {
             const moduleB = b.module_number || 0;
             return moduleA - moduleB;
         });
+
+        // إسناد أوقات متسلسلة خلال اليوم لمنع تداخل المواد في نفس الوقت
+        this.assignSequentialTimesPerDay(sessions);
         
         // حفظ الخطة
         const plan = {
@@ -179,6 +182,38 @@ const StudyPlanner = {
         this.scheduleNotifications(plan);
         
         return plan;
+    },
+    
+    // تعيين أوقات الجلسات بشكل متسلسل لكل يوم لمنع التداخل
+    assignSequentialTimesPerDay(sessions) {
+        // وقت بداية اليوم من الإعدادات (افتراضي 09:00)
+        const DEFAULT_START_TIME = localStorage.getItem(STUDY_START_TIME_KEY) || '09:00';
+        const BREAK_MINUTES = 15; // استراحة بسيطة بين الجلسات
+
+        // تجميع الجلسات حسب التاريخ
+        const byDate = sessions.reduce((acc, s) => {
+            (acc[s.scheduled_date] ||= []).push(s);
+            return acc;
+        }, {});
+
+        const timeToMinutes = (t) => {
+            const [h, m] = t.split(':').map(Number);
+            return h * 60 + m;
+        };
+        const minutesToTime = (mins) => {
+            const h = Math.floor(mins / 60).toString().padStart(2, '0');
+            const m = (mins % 60).toString().padStart(2, '0');
+            return `${h}:${m}`;
+        };
+
+        Object.keys(byDate).forEach(date => {
+            // الجلسات لهذا اليوم مرتبة مسبقاً حسب القواعد العامة
+            let cursor = timeToMinutes(DEFAULT_START_TIME);
+            byDate[date].forEach(s => {
+                s.scheduled_time = minutesToTime(cursor);
+                cursor += (s.duration_minutes || 60) + BREAK_MINUTES;
+            });
+        });
     },
     
     // إنشاء جلسة دراسية لموديول محدد
@@ -380,6 +415,28 @@ const StudyPlanner = {
             plans[index] = plan;
             localStorage.setItem('seu_study_plans', JSON.stringify(plans));
         }
+    },
+
+    // تحديث جلسة واحدة (تاريخ/وقت/ملاحظات...)
+    updateSession(sessionId, patch) {
+        const plan = this.getCurrentPlan();
+        if (!plan) return;
+        const s = plan.sessions.find(x => x.id === sessionId);
+        if (!s) return;
+        Object.assign(s, patch);
+        this.updatePlan(plan);
+        return s;
+    },
+
+    // تطبيق وقت بداية الدراسة الجديد على الخطة الحالية (إعادة ضبط أوقات اليوم فقط)
+    applyStudyStartTime() {
+        const plan = this.getCurrentPlan();
+        if (!plan) return;
+
+        // اعد تعيين الأوقات لجميع الجلسات بحسب الوقت المختار
+        this.assignSequentialTimesPerDay(plan.sessions);
+        this.updatePlan(plan);
+        return plan;
     },
     
     // الحصول على الإحصائيات
