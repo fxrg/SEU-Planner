@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fxrg.github.io/SEU-Planner/sitemap.xml
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Crawl-delay (optional, for politeness)
+Crawl-delay: 1
+
+# Disallow specific paths if needed (currently none)
+# Disallow: /backend/
+# Disallow: /Tests/

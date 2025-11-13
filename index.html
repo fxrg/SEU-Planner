@@ -58,9 +58,7 @@
     
     <!-- PWA Manifest & Icons -->
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <!-- Icon links temporarily removed (no local icon files) -->
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
@@ -142,6 +140,10 @@
                         <button type="submit" class="btn btn-primary btn-block">
                             تسجيل الدخول
                         </button>
+                        <button id="guest-login" class="btn btn-secondary btn-block" style="margin-top:10px;" type="button">
+                            الدخول كضيف 👀
+                        </button>
+                        <small style="display:block; margin-top:8px; color:#666;">يمكنك استعراض التخصصات والمواد كضيف. لإنشاء خطة يجب التسجيل.</small>
                     </form>
                     <div class="auth-footer">
                         <p>ليس لديك حساب؟ <a href="#" id="show-register">سجل الآن</a></p>
@@ -263,6 +265,31 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- FAQ Section (Home only) -->
+                <section class="faq-section">
+                    <div class="container">
+                        <h2 class="faq-title">❓ الأسئلة الشائعة</h2>
+                        <div class="faq-list">
+                            <details>
+                                <summary>هل يعمل المخطط بدون إنترنت؟</summary>
+                                <div class="faq-answer">نعم، يعتمد على التخزين المحلي في المتصفح. عند تفعيل Firebase سيتم استخدامه لتسجيل الدخول فقط.</div>
+                            </details>
+                            <details>
+                                <summary>كيف أغير وقت بداية الدراسة اليومي؟</summary>
+                                <div class="faq-answer">اذهب إلى الإعدادات ← تفضيلات الإشعارات ← اختر "وقت بداية الدراسة يومياً" ثم احفظ. سيتم ضبط أوقات الجلسات تلقائياً.</div>
+                            </details>
+                            <details>
+                                <summary>هل أستطيع تعديل موعد جلسة معينة؟</summary>
+                                <div class="faq-answer">من "جلسات اليوم" اضغط زر تعديل على الجلسة لتغيير التاريخ والوقت والملاحظة ثم احفظ.</div>
+                            </details>
+                            <details>
+                                <summary>كيف أحذف الخطة وأنشئ واحدة جديدة؟</summary>
+                                <div class="faq-answer">من لوحة التحكم اضغط "حذف الخطة" ثم "إنشاء خطة" واختر المواد والترم.</div>
+                            </details>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -370,30 +397,6 @@
         </div>
     </main>
 
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="container">
-            <h2 class="faq-title">❓ الأسئلة الشائعة</h2>
-            <div class="faq-list">
-                <details>
-                    <summary>هل يعمل المخطط بدون إنترنت؟</summary>
-                    <div class="faq-answer">نعم، يعتمد على التخزين المحلي في المتصفح. عند تفعيل Firebase سيتم استخدامه لتسجيل الدخول فقط.</div>
-                </details>
-                <details>
-                    <summary>كيف أغير وقت بداية الدراسة اليومي؟</summary>
-                    <div class="faq-answer">اذهب إلى الإعدادات ← تفضيلات الإشعارات ← اختر "وقت بداية الدراسة يومياً" ثم احفظ. سيتم ضبط أوقات الجلسات تلقائياً.</div>
-                </details>
-                <details>
-                    <summary>هل أستطيع تعديل موعد جلسة معينة؟</summary>
-                    <div class="faq-answer">من "جلسات اليوم" اضغط زر تعديل على الجلسة لتغيير التاريخ والوقت والملاحظة ثم احفظ.</div>
-                </details>
-                <details>
-                    <summary>كيف أحذف الخطة وأنشئ واحدة جديدة؟</summary>
-                    <div class="faq-answer">من لوحة التحكم اضغط "حذف الخطة" ثم "إنشاء خطة" واختر المواد والترم.</div>
-                </details>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -449,14 +452,14 @@
         </div>
     </div>
 
-    <!-- Scripts - تحميل الملفات بالترتيب الصحيح -->
-        <!-- Firebase (optional) -->
+    
+       
         <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
         <script>
             
             
-            // ⚠️ إعداداتك من Firebase Console
+            
             window.FIREBASE_CONFIG = {
                 apiKey: "AIzaSyA2oY6ItciZBjRD6qASZ0xTx3G5HKE4_ro",
                 authDomain: "seu-planner.firebaseapp.com",

@@ -279,89 +279,137 @@ const Dashboard = {
 
     showPlanGenerator() {
         UI.showModal('plan-modal');
-        
+
         const user = Auth.getCurrentUser();
-        if (user && user.major_id) {
-            const majorKey = this.getMajorKeyById(user.major_id);
+
+        // Helper to render course list for a given major key
+        const renderCoursesForMajor = (majorKey) => {
             const major = SEU_COMPLETE_DATA.majors[majorKey];
-            
-            if (major) {
-                const container = document.getElementById('courses-list');
-                const courseCodes = major.courses;
-                
-                // إضافة شريط البحث
-                const searchHTML = `
-                    <div class="course-search-box" style="margin-bottom: 20px;">
-                        <input type="text" 
-                               id="course-search-input" 
-                               placeholder="🔍 ابحث عن مقرر (الاسم أو الرمز)..."
-                               style="width: 100%; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 15px; transition: all 0.3s;">
-                        <div id="search-count" style="margin-top: 8px; color: #666; font-size: 14px;"></div>
+            if (!major) return;
+            const container = document.getElementById('courses-list');
+            const courseCodes = major.courses || [];
+
+            const searchHTML = `
+                <div class="course-search-box" style="margin-bottom: 20px;">
+                    <input type="text" 
+                           id="course-search-input" 
+                           placeholder="🔍 ابحث عن مقرر (الاسم أو الرمز)..."
+                           style="width: 100%; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 15px; transition: all 0.3s;">
+                    <div id="search-count" style="margin-top: 8px; color: #666; font-size: 14px;"></div>
+                </div>
+            `;
+
+            const coursesHTML = courseCodes.map(code => {
+                const courseData = SEU_COMPLETE_DATA.courses[code] || {
+                    code,
+                    name_ar: `مقرر ${code}`,
+                    name_en: code,
+                    difficulty: 3,
+                    hours: 3
+                };
+
+                return `
+                    <div class="course-item" data-code="${code}" data-name="${courseData.name_ar.toLowerCase()}">
+                        <input type="checkbox" id="course-${code}" value="${code}" data-course='${JSON.stringify(courseData)}'>
+                        <label for="course-${code}">
+                            <span class="course-code">${code}</span>
+                            ${courseData.name_ar}
+                            <span class="course-difficulty">
+                                ${'⭐'.repeat(courseData.difficulty || 3)}
+                            </span>
+                        </label>
                     </div>
                 `;
-                
-                const coursesHTML = courseCodes.map(code => {
-                    const courseData = SEU_COMPLETE_DATA.courses[code];
-                    if (!courseData) return '';
-                    
-                    return `
-                        <div class="course-item" data-code="${code}" data-name="${courseData.name_ar.toLowerCase()}">
-                            <input type="checkbox" id="course-${code}" value="${code}" data-course='${JSON.stringify(courseData)}'>
-                            <label for="course-${code}">
-                                <span class="course-code">${code}</span>
-                                ${courseData.name_ar}
-                                <span class="course-difficulty">
-                                    ${'⭐'.repeat(courseData.difficulty || 3)}
-                                </span>
-                            </label>
-                        </div>
-                    `;
-                }).join('');
-                
-                container.innerHTML = searchHTML + '<div id="courses-container">' + coursesHTML + '</div>';
-                
-                // إضافة event listener للبحث
-                const searchInput = document.getElementById('course-search-input');
-                const searchCount = document.getElementById('search-count');
-                const coursesContainer = document.getElementById('courses-container');
-                const allCourseItems = coursesContainer.querySelectorAll('.course-item');
-                
-                searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
-                
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase().trim();
-                    let visibleCount = 0;
-                    
-                    allCourseItems.forEach(item => {
-                        const code = item.dataset.code.toLowerCase();
-                        const name = item.dataset.name;
-                        const matches = code.includes(searchTerm) || name.includes(searchTerm);
-                        
-                        item.style.display = matches ? 'flex' : 'none';
-                        if (matches) visibleCount++;
-                    });
-                    
-                    if (searchTerm) {
-                        searchCount.textContent = `عرض ${visibleCount} من ${allCourseItems.length} مقرر`;
-                        searchCount.style.color = visibleCount > 0 ? '#28a745' : '#dc3545';
-                    } else {
-                        searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
-                        searchCount.style.color = '#666';
-                    }
+            }).join('');
+
+            container.innerHTML = searchHTML + '<div id="courses-container">' + coursesHTML + '</div>';
+
+            // Search behavior
+            const searchInput = document.getElementById('course-search-input');
+            const searchCount = document.getElementById('search-count');
+            const coursesContainer = document.getElementById('courses-container');
+            const allCourseItems = coursesContainer.querySelectorAll('.course-item');
+
+            searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
+
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                let visibleCount = 0;
+
+                allCourseItems.forEach(item => {
+                    const code = item.dataset.code.toLowerCase();
+                    const name = item.dataset.name;
+                    const matches = code.includes(searchTerm) || name.includes(searchTerm);
+                    item.style.display = matches ? 'flex' : 'none';
+                    if (matches) visibleCount++;
                 });
-                
-                // تحسين تأثير الفوكس على البحث
-                searchInput.addEventListener('focus', (e) => {
-                    e.target.style.borderColor = '#1a73e8';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(26, 115, 232, 0.1)';
-                });
-                
-                searchInput.addEventListener('blur', (e) => {
-                    e.target.style.borderColor = '#e0e0e0';
-                    e.target.style.boxShadow = 'none';
-                });
-            }
+
+                if (searchTerm) {
+                    searchCount.textContent = `عرض ${visibleCount} من ${allCourseItems.length} مقرر`;
+                    searchCount.style.color = visibleCount > 0 ? '#28a745' : '#dc3545';
+                } else {
+                    searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
+                    searchCount.style.color = '#666';
+                }
+            });
+
+            searchInput.addEventListener('focus', (e) => {
+                e.target.style.borderColor = '#1a73e8';
+                e.target.style.boxShadow = '0 0 0 3px rgba(26, 115, 232, 0.1)';
+            });
+            searchInput.addEventListener('blur', (e) => {
+                e.target.style.borderColor = '#e0e0e0';
+                e.target.style.boxShadow = 'none';
+            });
+        };
+
+        // If logged-in user with a major → render directly
+        if (user && user.major_id && !Auth.isGuest()) {
+            const majorKey = this.getMajorKeyById(user.major_id);
+            if (majorKey) renderCoursesForMajor(majorKey);
+            return;
         }
+
+        // Guest or no major selected → allow browsing majors
+        const container = document.getElementById('courses-list');
+        const majors = SEU_COMPLETE_DATA.majors;
+        const options = Object.entries(majors).map(([key, m]) => `<option value="${key}">${m.name_ar} — <small>${m.college_ar}</small></option>`).join('');
+        const info = `<div class="alert" style="background:#f7f7f7; border:1px solid #eee; padding:10px 12px; border-radius:8px; margin-bottom:12px; color:#666;">
+            👀 أنت تتصفح كضيف. يمكن رؤية المواد فقط. لإنشاء خطة يلزم تسجيل الدخول.
+        </div>`;
+        const majorPicker = `
+            ${Auth.isGuest() ? info : ''}
+            <div class="form-group" style="margin-bottom:12px;">
+                <label>اختر التخصص لعرض مقرراته:</label>
+                <select id="browse-major" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
+                    ${options}
+                </select>
+            </div>
+            <div id="browse-courses"></div>
+        `;
+        container.innerHTML = majorPicker;
+        const browseSelect = document.getElementById('browse-major');
+        const browseCoursesHost = document.getElementById('browse-courses');
+        const renderForSelected = () => {
+            // Temporarily point courses-list to host for rendering function
+            const old = document.getElementById('courses-list');
+            const temp = document.createElement('div');
+            temp.id = 'courses-list-temp';
+            browseCoursesHost.innerHTML = '';
+            browseCoursesHost.appendChild(temp);
+            // Render into temp then move its children back
+            const original = document.getElementById('courses-list');
+            original.id = 'courses-list-orig';
+            temp.id = 'courses-list';
+            renderCoursesForMajor(browseSelect.value);
+            // Move content into host and restore ids
+            const rendered = document.getElementById('courses-container')?.parentElement;
+            if (rendered) browseCoursesHost.innerHTML = rendered.outerHTML;
+            document.getElementById('courses-list').id = 'courses-list-temp-done';
+            document.getElementById('courses-list-orig').id = 'courses-list';
+        };
+        browseSelect.addEventListener('change', renderForSelected);
+        renderForSelected();
     },
 
     getMajorKeyById(majorId) {
@@ -411,8 +459,13 @@ const Dashboard = {
                         <p style="margin-bottom: 15px; color: #666;">اختر من ${MIN_COURSES} إلى ${MAX_COURSES} مواد:</p>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto;">
                             ${major.courses.map(code => {
-                                const c = SEU_COMPLETE_DATA.courses[code];
-                                if (!c) return '';
+                                const c = SEU_COMPLETE_DATA.courses[code] || {
+                                    code,
+                                    name_ar: `مقرر ${code}`,
+                                    name_en: code,
+                                    difficulty: 3,
+                                    hours: 3
+                                };
                                 return `
                                 <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
                                     <input type="checkbox" value="${code}" data-course='${JSON.stringify(c)}' style="margin-left: 10px;">
@@ -457,6 +510,13 @@ const Dashboard = {
     },
 
     generatePlan() {
+        // Gate plan generation for guests
+        if (Auth.isGuest() || !Auth.isLoggedIn()) {
+            UI.showToast('لإنشاء خطة يلزم تسجيل الدخول أولاً', 'warning');
+            UI.hideModal('plan-modal');
+            UI.showPage('login-page');
+            return;
+        }
         const checkboxes = document.querySelectorAll('#courses-list input[type="checkbox"]:checked');
         if (checkboxes.length === 0) {
             UI.showToast('اختر مادة واحدة على الأقل', 'warning');

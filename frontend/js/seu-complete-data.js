@@ -279,6 +279,46 @@ const SEU_COMPLETE_DATA = {
         'DS482': { code: 'DS482', name_ar: 'التعلم العميق', name_en: 'Deep Learning', difficulty: 5, hours: 3 },
         'DS483': { code: 'DS483', name_ar: 'معالجة اللغات الطبيعية', name_en: 'Natural Language Processing', difficulty: 5, hours: 3 },
         'DS484': { code: 'DS484', name_ar: 'تحسين البيانات الضخمة', name_en: 'Big Data Optimization', difficulty: 5, hours: 3 }
+        ,
+        // مقررات كلية العلوم والدراسات النظرية - مواد تأسيسية (003)
+        'CS003':  { code: 'CS003',  name_ar: 'مهارات الحاسب (تأسيسي)',      name_en: 'Computer Skills (Foundation)', difficulty: 1, hours: 3 },
+        'CI003':  { code: 'CI003',  name_ar: 'مهارات أكاديمية (تأسيسي)',    name_en: 'Academic Skills (Foundation)', difficulty: 2, hours: 3 },
+        'ENG003': { code: 'ENG003', name_ar: 'مهارات اللغة الإنجليزية',      name_en: 'English Skills', difficulty: 2, hours: 3 },
+        'COMM003':{ code: 'COMM003',name_ar: 'مهارات الاتصال',              name_en: 'Communication Skills', difficulty: 2, hours: 3 },
+        'MATH003':{ code: 'MATH003',name_ar: 'الرياضيات الأساسية',          name_en: 'Basic Mathematics', difficulty: 3, hours: 3 },
+
+        // مقررات القانون (LAW)
+        'LAW121': { code: 'LAW121', name_ar: 'مدخل إلى القانون', name_en: 'Introduction to Law', difficulty: 2, hours: 3 },
+        'LAW122': { code: 'LAW122', name_ar: 'أساسيات البحث القانوني', name_en: 'Basics of Legal Research', difficulty: 3, hours: 3 },
+        'LAW123': { code: 'LAW123', name_ar: 'مبادئ الاقتصاد لطلبة القانون', name_en: 'Principles of Economics for Law', difficulty: 3, hours: 3 },
+        'LAW211': { code: 'LAW211', name_ar: 'مدخل إلى أصول الفقه', name_en: 'Introduction to Islamic Jurisprudence', difficulty: 3, hours: 3 },
+        'LAW212': { code: 'LAW212', name_ar: 'تاريخ القانون', name_en: 'History of Law', difficulty: 2, hours: 3 },
+        'LAW213': { code: 'LAW213', name_ar: 'أحكام العقد', name_en: 'Contract Provisions', difficulty: 4, hours: 3 },
+        'LAW214': { code: 'LAW214', name_ar: 'الحقوق العينية (حقوق الملكية)', name_en: 'Property Rights', difficulty: 4, hours: 3 },
+        'LAW215': { code: 'LAW215', name_ar: 'مصطلحات قانونية', name_en: 'Legal Terminology', difficulty: 2, hours: 2 },
+        'LAW221': { code: 'LAW221', name_ar: 'القانون التجاري', name_en: 'Commercial Law', difficulty: 4, hours: 3 },
+        'LAW222': { code: 'LAW222', name_ar: 'القانون الإداري', name_en: 'Administrative Law', difficulty: 4, hours: 3 },
+        'LAW223': { code: 'LAW223', name_ar: 'المرافعات المدنية', name_en: 'Civil Procedures', difficulty: 4, hours: 3 },
+        'LAW224': { code: 'LAW224', name_ar: 'القانون الجنائي', name_en: 'Criminal Law', difficulty: 4, hours: 3 },
+        'LAW225': { code: 'LAW225', name_ar: 'الأحوال الشخصية', name_en: 'Family Law', difficulty: 3, hours: 3 },
+        'LAW311': { code: 'LAW311', name_ar: 'القانون الدولي العام', name_en: 'Public International Law', difficulty: 4, hours: 3 },
+        'LAW312': { code: 'LAW312', name_ar: 'أحكام الجرائم والعقوبات (شريعة)', name_en: 'Shariah Provisions of Crimes and Punishments', difficulty: 4, hours: 3 },
+        'LAW313': { code: 'LAW313', name_ar: 'قانون الشركات', name_en: 'Corporate Law', difficulty: 4, hours: 3 },
+        'LAW314': { code: 'LAW314', name_ar: 'قانون العمل والتأمينات الاجتماعية', name_en: 'Labor and Social Security Law', difficulty: 4, hours: 3 },
+        'LAW315': { code: 'LAW315', name_ar: 'القانون المصرفي والمالي', name_en: 'Banking and Finance Law', difficulty: 4, hours: 3 },
+        'LAW411': { code: 'LAW411', name_ar: 'الأوراق التجارية', name_en: 'Commercial Papers', difficulty: 4, hours: 3 },
+        'LAW412': { code: 'LAW412', name_ar: 'الزكاة والضرائب', name_en: 'Zakat & Taxes', difficulty: 3, hours: 3 },
+        'LAW413': { code: 'LAW413', name_ar: 'العقود الإدارية', name_en: 'Administrative Contracts', difficulty: 4, hours: 3 },
+        'LAW421': { code: 'LAW421', name_ar: 'الإجراءات الجزائية', name_en: 'Penal Procedures', difficulty: 4, hours: 3 },
+        'LAW422': { code: 'LAW422', name_ar: 'القانون الدولي الخاص', name_en: 'International Private Law', difficulty: 4, hours: 3 },
+        'LAW423': { code: 'LAW423', name_ar: 'تنفيذ الأحكام', name_en: 'Law Enforcement', difficulty: 3, hours: 3 },
+        'LAW424': { code: 'LAW424', name_ar: 'القانون البحري والجوي', name_en: 'Maritime and Air Law', difficulty: 4, hours: 3 },
+        'LAW425': { code: 'LAW425', name_ar: 'قانون التأمين', name_en: 'Insurance Law', difficulty: 3, hours: 3 },
+        'LAW426': { code: 'LAW426', name_ar: 'الأنظمة القانونية المعاصرة', name_en: 'Contemporary Legal Systems', difficulty: 3, hours: 3 },
+        'LAW428': { code: 'LAW428', name_ar: 'التدريب التعاوني', name_en: 'Cooperative Training', difficulty: 2, hours: 6 },
+
+        // مقرر من قسم الترجمة ذُكر من المستخدم
+        'TRA499': { code: 'TRA499', name_ar: 'مشروع التخرج في الترجمة', name_en: 'Translation Project', difficulty: 4, hours: 3 }
     }
 };
 

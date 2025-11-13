@@ -4,40 +4,40 @@
     
     <!-- Main Page / Dashboard -->
     <url>
-        <loc>https://yourdomain.com/</loc>
+        <loc>https://fxrg.github.io/SEU-Planner/</loc>
         <lastmod>2025-11-13</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
-        <xhtml:link rel="alternate" hreflang="ar" href="https://yourdomain.com/" />
+        <xhtml:link rel="alternate" hreflang="ar" href="https://fxrg.github.io/SEU-Planner/" />
     </url>
     
-    <!-- Login Page -->
+    <!-- Login Page (SPA section) -->
     <url>
-        <loc>https://yourdomain.com/#login</loc>
+        <loc>https://fxrg.github.io/SEU-Planner/#login</loc>
         <lastmod>2025-11-13</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     
-    <!-- Register Page -->
+    <!-- Register Page (SPA section) -->
     <url>
-        <loc>https://yourdomain.com/#register</loc>
+        <loc>https://fxrg.github.io/SEU-Planner/#register</loc>
         <lastmod>2025-11-13</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     
-    <!-- Calendar Page -->
+    <!-- Calendar Page (SPA section) -->
     <url>
-        <loc>https://yourdomain.com/#calendar</loc>
+        <loc>https://fxrg.github.io/SEU-Planner/#calendar</loc>
         <lastmod>2025-11-13</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
     
-    <!-- Settings Page -->
+    <!-- Settings Page (SPA section) -->
     <url>
-        <loc>https://yourdomain.com/#settings</loc>
+        <loc>https://fxrg.github.io/SEU-Planner/#settings</loc>
         <lastmod>2025-11-13</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>

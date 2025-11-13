@@ -10,6 +10,18 @@ const Auth = {
             await this.handleLogin();
         });
 
+        // Guest login
+        const guestBtn = document.getElementById('guest-login');
+        if (guestBtn) {
+            guestBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.enableGuestMode();
+                UI.showToast('تم الدخول كضيف. يمكنك التصفح فقط.', 'info');
+                UI.showPage('dashboard-page');
+                Dashboard.load();
+            });
+        }
+
         // Register form
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -38,21 +50,26 @@ const Auth = {
         const select = document.getElementById('reg-major');
         if (!select) return;
         
-        // قائمة التخصصات من بيانات الجامعة السعودية الإلكترونية
-        const majors = [
-            { id: 1, name_ar: 'المعلوماتية الصحية', college_ar: 'كلية العلوم الصحية' },
-            { id: 2, name_ar: 'الصحة العامة', college_ar: 'كلية العلوم الصحية' },
-            { id: 3, name_ar: 'تقنية المعلومات', college_ar: 'كلية الحوسبة والمعلوماتية' },
-            { id: 4, name_ar: 'علوم الحاسب الآلي', college_ar: 'كلية الحوسبة والمعلوماتية' },
-            { id: 5, name_ar: 'علوم البيانات', college_ar: 'كلية الحوسبة والمعلوماتية' },
-            { id: 6, name_ar: 'المالية', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 7, name_ar: 'إدارة الأعمال', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 8, name_ar: 'التجارة الإلكترونية', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 9, name_ar: 'المحاسبة', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 10, name_ar: 'اللغة الإنجليزية والترجمة', college_ar: 'كلية العلوم والدراسات النظرية' },
-            { id: 11, name_ar: 'القانون', college_ar: 'كلية العلوم والدراسات النظرية' },
-            { id: 12, name_ar: 'الإعلام الرقمي', college_ar: 'كلية العلوم والدراسات النظرية' }
-        ];
+        // بناء قائمة التخصصات من SEU_COMPLETE_DATA لتفادي التكرار
+        const idMap = {
+            health_informatics: 1,
+            public_health: 2,
+            it: 3,
+            cs: 4,
+            ds: 5,
+            finance: 6,
+            business: 7,
+            ecommerce: 8,
+            accounting: 9,
+            english: 10,
+            law: 11,
+            digital_media: 12
+        };
+        const majors = Object.entries(SEU_COMPLETE_DATA.majors).map(([key, m]) => ({
+            id: idMap[key] || key,
+            name_ar: m.name_ar,
+            college_ar: m.college_ar
+        }));
         
         // تجميع التخصصات حسب الكلية
         const colleges = {};
@@ -125,6 +142,7 @@ const Auth = {
     },
 
     logout() {
+        this.disableGuestMode();
         API.removeToken();
         UI.showToast('تم تسجيل الخروج', 'info');
         UI.showPage('login-page');
@@ -134,8 +152,25 @@ const Auth = {
         return !!API.getToken();
     },
 
+    isGuest() {
+        return localStorage.getItem('GUEST_MODE') === '1' && !this.isLoggedIn();
+    },
+
+    enableGuestMode() {
+        localStorage.setItem('GUEST_MODE', '1');
+        // إعداد اسم المستخدم في الواجهة
+        const guest = { id: 'guest', full_name: 'ضيف', email: null, major_id: null, selected_courses: [] };
+        localStorage.setItem(USER_KEY, JSON.stringify(guest));
+    },
+
+    disableGuestMode() {
+        localStorage.removeItem('GUEST_MODE');
+    },
+
     getCurrentUser() {
         const userStr = localStorage.getItem(USER_KEY);
-        return userStr ? JSON.parse(userStr) : null;
+        if (userStr) return JSON.parse(userStr);
+        if (this.isGuest()) return { id: 'guest', full_name: 'ضيف', email: null, major_id: null, selected_courses: [] };
+        return null;
     }
 };
