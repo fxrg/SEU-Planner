@@ -1,5 +1,5 @@
-// Notifications Module
-const Notifications = {
+// Notifications Module (exported on window for global access)
+window.Notifications = {
     async load() {
         await this.loadNotifications();
         this.setupEventListeners();
@@ -92,9 +92,10 @@ const Notifications = {
     }
 };
 
-// Add notification styles
-const style = document.createElement('style');
-style.textContent = `
+// Add notification styles (scoped var to avoid global name collisions)
+(function(){
+const notifStyle = document.createElement('style');
+notifStyle.textContent = `
 .notifications-list {
     display: flex;
     flex-direction: column;
@@ -147,4 +148,5 @@ style.textContent = `
     color: #adb5bd;
 }
 `;
-document.head.appendChild(style);
+document.head.appendChild(notifStyle);
+})();

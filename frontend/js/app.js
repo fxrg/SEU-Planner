@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize auth
     await Auth.init();
 
-    // Check if logged in
-    if (Auth.isLoggedIn()) {
+    // Check if logged in or guest
+    if (Auth.isLoggedIn() || Auth.isGuest()) {
         UI.showPage('dashboard-page');
         await Dashboard.load();
     } else {
@@ -29,7 +29,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await Calendar.load();
                     break;
                 case 'notifications':
-                    await Notifications.load();
+                    if (window.Notifications && typeof Notifications.load === 'function') {
+                        await Notifications.load();
+                    } else {
+                        console.warn('Notifications module not available');
+                    }
                     break;
                 case 'settings':
                     await Settings.load();

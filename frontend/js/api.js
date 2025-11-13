@@ -133,32 +133,62 @@ const API = {
     // Majors & Courses - From local data
     async getMajors() {
         await this.delay();
-        const majors = [
-            { id: 1, name_ar: 'المعلوماتية الصحية', college_ar: 'كلية العلوم الصحية' },
-            { id: 2, name_ar: 'الصحة العامة', college_ar: 'كلية العلوم الصحية' },
-            { id: 3, name_ar: 'تقنية المعلومات', college_ar: 'كلية الحوسبة والمعلوماتية' },
-            { id: 4, name_ar: 'علوم الحاسب الآلي', college_ar: 'كلية الحوسبة والمعلوماتية' },
-            { id: 5, name_ar: 'علوم البيانات', college_ar: 'كلية الحوسبة والمعلوماتية' },
-            { id: 6, name_ar: 'المالية', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 7, name_ar: 'إدارة الأعمال', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 8, name_ar: 'التجارة الإلكترونية', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 9, name_ar: 'المحاسبة', college_ar: 'كلية العلوم الإدارية والمالية' },
-            { id: 10, name_ar: 'اللغة الإنجليزية والترجمة', college_ar: 'كلية العلوم والدراسات النظرية' },
-            { id: 11, name_ar: 'القانون', college_ar: 'كلية العلوم والدراسات النظرية' },
-            { id: 12, name_ar: 'الإعلام الرقمي', college_ar: 'كلية العلوم والدراسات النظرية' }
-        ];
+        const idMap = {
+            health_informatics: 1,
+            public_health: 2,
+            it: 3,
+            cs: 4,
+            ds: 5,
+            finance: 6,
+            business: 7,
+            ecommerce: 8,
+            accounting: 9,
+            english: 10,
+            law: 11,
+            digital_media: 12
+        };
+        const majors = Object.entries(SEU_COMPLETE_DATA.majors).map(([key, m]) => ({
+            id: idMap[key] || key,
+            key,
+            name_ar: m.name_ar,
+            college_ar: m.college_ar
+        }));
         return { success: true, data: majors };
     },
 
     async getMajor(id) {
         await this.delay();
-        // This would return major details with courses
-        return { success: true, data: { id, name_ar: 'تخصص', courses: [] } };
+        const keyById = {
+            1: 'health_informatics',
+            2: 'public_health',
+            3: 'it',
+            4: 'cs',
+            5: 'ds',
+            6: 'finance',
+            7: 'business',
+            8: 'ecommerce',
+            9: 'accounting',
+            10: 'english',
+            11: 'law',
+            12: 'digital_media'
+        };
+        const key = keyById[id] || id;
+        const major = SEU_COMPLETE_DATA.majors[key];
+        if (!major) return { success: false, error: 'major_not_found' };
+        const courses = (major.courses || []).map(code => SEU_COMPLETE_DATA.courses[code] || {
+            code,
+            name_ar: `مقرر ${code}`,
+            name_en: code,
+            difficulty: 3,
+            hours: 3
+        });
+        return { success: true, data: { id, key, name_ar: major.name_ar, courses } };
     },
 
     async getCourses(majorId) {
         await this.delay();
-        return { success: true, data: [] };
+        const major = (await this.getMajor(majorId)).data;
+        return { success: true, data: major ? major.courses : [] };
     },
 
     // Plans - Use StudyPlanner module
