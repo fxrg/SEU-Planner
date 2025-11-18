@@ -23,6 +23,8 @@
    - انقر على السطر
    - فعّل "Enable"
    - احفظ
+5. اختياري لكن يُنصح به للجلسات: فعّل **Anonymous** للسماح بالانضمام/الإنشاء بدون تسجيل كامل
+   - انقر **Anonymous** ثم **Enable** ثم احفظ
 
 ### الخطوة 3: الحصول على إعدادات المشروع
 
@@ -148,9 +150,32 @@ window.FIREBASE_CONFIG = {
        match /users/{userId} {
          allow read, write: if request.auth.uid == userId;
        }
+            // جلسات المذاكرة المشتركة
+            match /sessions/{code} {
+               allow read: if true; // يمكن لأي شخص قراءة معلومات الجلسة بالكود
+               allow create: if request.auth != null &&
+                  request.resource.data.ownerId == request.auth.uid &&
+                  request.resource.data.code.size() >= 6;
+               allow update: if request.auth != null &&
+                  request.resource.data.diff(resource.data).changedKeys().hasOnly(["status","startAt","onBreak","breakStartAt","breaksUsed"]) &&
+                  resource.data.ownerId == request.auth.uid; // صاحب الجلسة فقط يغير الحالة والبريكات
+               allow delete: if request.auth != null; // يمكن حذف الجلسة عند مغادرة آخر مشارك
+
+               // المشاركون
+               match /participants/{uid} {
+                  allow read: if true;
+                  allow create, update, delete: if request.auth != null && request.auth.uid == uid;
+               }
+            }
      }
    }
    ```
+
+3. لتفعيل ميزة الجلسات: في `index.html` تأكد من تحميل سكربت Firestore:
+    ```html
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    ```
+    وسيتم تهيئة قاعدة البيانات تلقائياً عبر `frontend/js/firebase-init.js` كـ `window.db`.
 
 3. **النسخ الاحتياطي:** 
    - Firebase يحفظ البيانات تلقائياً

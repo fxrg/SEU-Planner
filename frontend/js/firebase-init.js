@@ -8,7 +8,26 @@
       if (firebase.apps && firebase.apps.length === 0) {
         firebase.initializeApp(window.FIREBASE_CONFIG);
       }
+      // Initialize Firestore if available
+      if (firebase.firestore) {
+        try {
+          window.db = firebase.firestore();
+        } catch (e) {
+          console.warn('Firestore init warning:', e);
+        }
+      }
       window.FIREBASE_ENABLED = true;
+      // Initialize Firestore if available
+      try {
+        if (firebase.firestore) {
+          window.db = firebase.firestore();
+          console.log('%c✅ Firestore initialized', 'color: green');
+        } else {
+          console.warn('Firestore SDK not loaded. Add firebase-firestore-compat.js');
+        }
+      } catch (e) {
+        console.warn('Firestore init error:', e);
+      }
       console.log('%c✅ Firebase Enabled - Accounts saved to cloud', 'color: green; font-weight: bold');
       console.log('📊 Check users at: https://console.firebase.google.com');
     } else {
