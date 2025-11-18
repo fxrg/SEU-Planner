@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جلسة مذاكرة — SEU Planner</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="frontend/css/dashboard.css">
+  <link rel="stylesheet" href="frontend/css/planner.css">
+  <script src="frontend/js/dark-mode.js?v=3"></script>
+  <style>
+    .page-container { max-width: 960px; margin: 0 auto; padding: 20px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; }
+    .chip { padding:6px 10px; border-radius:16px; font-size:13px; background:#ffe9c7; color:#b26b00; }
+    .participants-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; list-style:none; padding:0; margin:0; }
+    .countdown-box { transform: scale(1.05); }
+    .toolbar { display:flex; gap:8px; align-items:center; }
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading hidden"><div class="spinner"></div></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <div class="page-container" id="session-detail-root">
+    <div class="topbar">
+      <h2 id="session-title">👥 جلسة مذاكرة</h2>
+      <div class="toolbar">
+        <button id="dark-mode-toggle" class="dark-mode-btn" title="تبديل الوضع الداكن" style="margin-left: 8px;">
+          <span class="icon-light">🌙</span>
+          <span class="icon-dark">☀️</span>
+        </button>
+        <span id="status-chip" class="chip">بانتظار البدء</span>
+        <a href="index.html#sessions" class="btn btn-sm">رجوع</a>
+      </div>
+    </div>
+
+    <div class="card" id="current-session">
+      <div class="section-header" style="justify-content:space-between;">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+          <div><strong>الكود:</strong> <span id="session-code-display">—</span>
+            <button id="copy-code-btn" class="btn btn-sm" title="نسخ الكود" style="margin-right:8px;">نسخ</button>
+          </div>
+          <div><strong>المنشئ:</strong> <span id="session-owner">—</span></div>
+          <div><strong>المشاركون:</strong> <span id="participants-count">0</span></div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button id="start-session-btn" class="btn btn-sm btn-primary" style="display:none;">بدء الجلسة</button>
+          <button id="start-break-btn" class="btn btn-sm" style="display:none; background: #f59e0b; color: white;">☕ بدء استراحة</button>
+          <button id="end-break-btn" class="btn btn-sm" style="display:none; background: #10b981; color: white;">▶️ متابعة الدراسة</button>
+          <button id="end-session-btn" class="btn btn-sm btn-danger" style="display:none;">إنهاء</button>
+          <button id="leave-session-btn" class="btn btn-sm">مغادرة</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+        <div class="countdown-box">
+          <span class="countdown-icon">⏳</span>
+          <div>
+            <div class="countdown-label" id="countdown-label">العد التنازلي</div>
+            <div class="countdown-value" id="session-countdown">--:--:--</div>
+          </div>
+        </div>
+        <div class="info" style="display:flex; gap:20px; align-items:center; flex-wrap: wrap;">
+          <div><strong>الحالة:</strong> <span id="session-status">بانتظار البدء</span></div>
+          <div id="breaks-info" style="display:none;"><strong>الاستراحات المتبقية:</strong> <span id="breaks-remaining">0</span></div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px;">
+        <h4>المشاركون</h4>
+        <ul id="participants-list" class="participants-grid"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script>
+    window.FIREBASE_CONFIG = {
+      apiKey: "AIzaSyA2oY6ItciZBjRD6qASZ0xTx3G5HKE4_ro",
+      authDomain: "seu-planner.firebaseapp.com",
+      projectId: "seu-planner",
+      storageBucket: "seu-planner.firebasestorage.app",
+      messagingSenderId: "1040890051559",
+      appId: "1:1040890051559:web:b1ef6c49f284f4a589db42",
+      measurementId: "G-8PWYR81R97"
+    };
+  </script>
+  <script src="frontend/js/firebase-init.js?v=3"></script>
+  <script src="frontend/js/firebase-status.js?v=3"></script>
+  <script src="frontend/js/config.js?v=3"></script>
+  <script src="frontend/js/ui.js?v=3"></script>
+  <script src="frontend/js/auth.js?v=3"></script>
+  <script src="frontend/js/sessions.js?v=3"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await Sessions.load();
+        const params = new URLSearchParams(window.location.search);
+        const code = (params.get('code') || '').toUpperCase();
+        if (code) {
+          Sessions._saveActiveCode(code);
+          await Sessions.ensureAuth();
+          await Sessions.open(code);
+        } else {
+          UI.showToast('لم يتم توفير كود الجلسة في الرابط', 'warning');
+        }
+      } catch (e) {
+        console.warn('Session page init error', e);
+        UI.showToast('تعذر فتح الجلسة', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -38,9 +38,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'settings':
                     await Settings.load();
                     break;
+                case 'sessions':
+                    if (window.Sessions && typeof Sessions.load === 'function') {
+                        await Sessions.load();
+                    } else {
+                        console.warn('Sessions module not available');
+                    }
+                    break;
             }
         });
     });
+
+    // Pre-bind Sessions module once so its forms work reliably
+    if (window.Sessions && typeof Sessions.load === 'function') {
+        try { await Sessions.load(); } catch (e) { console.warn('Sessions init failed', e); }
+    }
 
     // Update countdown every minute
     setInterval(() => {

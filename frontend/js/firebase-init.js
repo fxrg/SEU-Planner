@@ -8,6 +8,14 @@
       if (firebase.apps && firebase.apps.length === 0) {
         firebase.initializeApp(window.FIREBASE_CONFIG);
       }
+      // Initialize Firestore if available
+      if (firebase.firestore) {
+        try {
+          window.db = firebase.firestore();
+        } catch (e) {
+          console.warn('Firestore init warning:', e);
+        }
+      }
       window.FIREBASE_ENABLED = true;
       console.log('%c✅ Firebase Enabled - Accounts saved to cloud', 'color: green; font-weight: bold');
       console.log('📊 Check users at: https://console.firebase.google.com');

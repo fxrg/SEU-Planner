@@ -99,6 +99,106 @@ body.dark-mode .stat-card {
     border: 1px solid var(--border);
 }
 
+/* Dark Mode - Session Cards */
+body.dark-mode #sessions-page .card[style*="linear-gradient(135deg, #e0e7ff"] {
+    background: linear-gradient(135deg, #1e1b3a 0%, #2d1b4e 100%) !important;
+    color: #e0d5ff !important;
+}
+
+body.dark-mode #sessions-page .card[style*="linear-gradient(135deg, #fce7f3"] {
+    background: linear-gradient(135deg, #3a1e2d 0%, #4e1b2d 100%) !important;
+    color: #ffd5e5 !important;
+}
+
+body.dark-mode #sessions-page h3 {
+    color: #c4b5fd !important;
+}
+
+body.dark-mode #sessions-page p {
+    color: #d0c5ff !important;
+    opacity: 0.9 !important;
+}
+
+body.dark-mode #sessions-page label {
+    color: #c4b5fd !important;
+}
+
+body.dark-mode #sessions-page input {
+    background: #0f0f1e !important;
+    border: 2px solid #4a4a6a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode #sessions-page input::placeholder {
+    color: #888 !important;
+}
+
+body.dark-mode #sessions-page input:focus {
+    border-color: #7c3aed !important;
+    background: #1a1a2e !important;
+}
+
+body.dark-mode #sessions-page .card[style*="e0e7ff"] div[style*="rgba(139, 92, 246"] {
+    background: rgba(139, 92, 246, 0.3) !important;
+}
+
+body.dark-mode #sessions-page .card[style*="fce7f3"] div[style*="rgba(244, 63, 94"] {
+    background: rgba(244, 63, 94, 0.3) !important;
+}
+
+/* ==================== Mobile Optimizations ==================== */
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+    }
+    
+    .page-header h2 {
+        font-size: 20px;
+    }
+    
+    /* Sessions cards mobile */
+    #sessions-page .card {
+        padding: 16px;
+    }
+    
+    /* Navigation mobile - show icons only */
+    .nav-link span:not(.icon):not(.badge) {
+        display: none;
+    }
+    
+    .nav-link {
+        padding: 8px 12px;
+    }
+    
+    /* Stats grid mobile */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    /* Modal mobile */
+    .modal-content {
+        margin: 20px;
+        max-width: calc(100% - 40px);
+    }
+    
+    /* Buttons mobile - larger touch targets */
+    .btn {
+        min-height: 44px;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+    
+    #sessions-page .card {
+        padding: 12px;
+    }
+}
+
 body.dark-mode .stat-card .stat-value {
     color: var(--primary);
 }

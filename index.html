@@ -107,6 +107,10 @@
                     <span class="icon">⚙️</span>
                     <span>الإعدادات</span>
                 </a>
+                <a href="#" data-page="sessions" class="nav-link">
+                    <span class="icon">👥</span>
+                    <span>جلسة مشتركة</span>
+                </a>
                 <a href="#" id="logout-btn" class="nav-link">
                     <span class="icon">🚪</span>
                     <span>تسجيل الخروج</span>
@@ -321,6 +325,123 @@
             </div>
         </div>
 
+        <!-- Sessions Page (Create/Join) -->
+        <div id="sessions-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>👥 جلسة مذاكرة مشتركة</h2>
+                </div>
+
+                <div style="display: grid; gap: 20px; grid-template-columns: 1fr;">
+                    <!-- Create Session Card -->
+                    <div class="card session-create-card" style="background: linear-gradient(135deg, #e0e7ff 0%, #e9d5ff 100%); color: #4c1d95; border: none; padding: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                            <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🆕</div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <h3 style="margin: 0; font-size: 20px; font-weight: 600; color: #5b21b6;">إنشاء جلسة جديدة</h3>
+                                <p style="margin: 4px 0 0 0; opacity: 0.8; font-size: 13px; color: #6b21a8;">أنشئ جلسة مذاكرة وشارك الكود مع أصدقائك</p>
+                            </div>
+                        </div>
+                        <form id="session-create-form" class="form" onsubmit="return false">
+                            <div style="display: grid; gap: 12px; grid-template-columns: 1fr;">
+                                <div class="form-group">
+                                    <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;">📝 اسم الجلسة</label>
+                                    <input type="text" id="session-name" placeholder="مثال: مذاكرة IT241" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                </div>
+                                <div style="display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                                    <div class="form-group">
+                                        <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;">⏰ المدة (ساعات)</label>
+                                        <input type="number" id="session-hours" min="0.5" max="12" step="0.5" value="3" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;">☕ فترات الراحة</label>
+                                        <input type="number" id="session-breaks" min="0" max="10" value="2" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;">⏸️ مدة الاستراحة (د)</label>
+                                        <input type="number" id="session-break-duration" min="5" max="30" step="5" value="15" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="session-create-btn" class="btn btn-primary" type="button" style="margin-top: 16px; width: 100%; padding: 14px; font-size: 16px; font-weight: 600; background: #7c3aed; color: white; border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); touch-action: manipulation;">
+                                ✨ إنشاء الجلسة الآن
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Join Session Card -->
+                    <div class="card session-join-card" style="background: linear-gradient(135deg, #fce7f3 0%, #fecaca 100%); color: #9f1239; border: none; padding: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                            <div style="width: 48px; height: 48px; background: rgba(244, 63, 94, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🔗</div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <h3 style="margin: 0; font-size: 20px; font-weight: 600; color: #be123c;">الانضمام إلى جلسة</h3>
+                                <p style="margin: 4px 0 0 0; opacity: 0.8; font-size: 13px; color: #be123c;">أدخل الكود المشترك للانضمام إلى جلسة موجودة</p>
+                            </div>
+                        </div>
+                        <form id="session-join-form" class="form" onsubmit="return false">
+                            <div class="session-join-wrapper" style="display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap;">
+                                <div class="form-group" style="flex: 1; margin: 0; min-width: 200px;">
+                                    <label style="color: #be123c; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;">🔑 كود الجلسة</label>
+                                    <input type="text" id="session-code-input" placeholder="مثل: ABC123" maxlength="10" required style="background: white; border: 2px solid #fda4af; color: #9f1239; padding: 12px 16px; border-radius: 8px; width: 100%; font-size: 17px; letter-spacing: 2px; text-align: center; text-transform: uppercase; height: 48px;" />
+                                </div>
+                                <button id="session-join-btn" class="btn btn-secondary" type="button" style="padding: 0 24px; font-size: 16px; font-weight: 600; background: #e11d48; color: white; border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3); white-space: nowrap; align-self: flex-end; height: 48px; margin-bottom: 0; touch-action: manipulation; min-width: 120px;">
+                                    🚀 انضمام
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Detail Page (Focused View) -->
+        <div id="session-detail-page" class="page">
+            <div class="container">
+                <div class="page-header" style="justify-content:space-between; align-items:center;">
+                    <h2 id="session-title">👥 جلسة مذاكرة</h2>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <span id="status-chip" style="padding:6px 10px; border-radius:16px; font-size:13px; background:#ffe9c7; color:#b26b00;">بانتظار البدء</span>
+                        <button class="btn btn-sm" onclick="UI.showPage('sessions-page')">رجوع</button>
+                    </div>
+                </div>
+
+                <div class="card" id="current-session">
+                    <div class="section-header" style="justify-content:space-between;">
+                        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+                            <div><strong>الكود:</strong> <span id="session-code-display">—</span>
+                                <button id="copy-code-btn" class="btn btn-sm" title="نسخ الكود" style="margin-right:8px;">نسخ</button>
+                            </div>
+                            <div><strong>المنشئ:</strong> <span id="session-owner">—</span></div>
+                            <div><strong>المشاركون:</strong> <span id="participants-count">0</span></div>
+                        </div>
+                        <div>
+                            <button id="start-session-btn" class="btn btn-sm btn-primary" style="display:none;">بدء الجلسة</button>
+                            <button id="end-session-btn" class="btn btn-sm btn-danger" style="display:none;">إنهاء</button>
+                            <button id="leave-session-btn" class="btn btn-sm">مغادرة</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+                        <div class="countdown-box" style="transform: scale(1.1);">
+                            <span class="countdown-icon">⏳</span>
+                            <div>
+                                <div class="countdown-label">العد التنازلي</div>
+                                <div class="countdown-value" id="session-countdown">--:--:--</div>
+                            </div>
+                        </div>
+                        <div class="info" style="display:flex; gap:20px; align-items:center;">
+                            <div><strong>الحالة:</strong> <span id="session-status">بانتظار البدء</span></div>
+                        </div>
+                    </div>
+
+                    <div class="section" style="margin-top:16px;">
+                        <h4>المشاركون</h4>
+                        <ul id="participants-list" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; list-style:none; padding:0; margin:0;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Settings Page -->
         <div id="settings-page" class="page">
             <div class="container">
@@ -456,6 +577,7 @@
        
         <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
         <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
         <script>
             
             
@@ -486,6 +608,7 @@
     <script src="frontend/js/calendar.js?v=3"></script>
     <script src="frontend/js/notifications.js?v=3"></script>
     <script src="frontend/js/settings.js?v=3"></script>
+    <script src="frontend/js/sessions.js?v=3"></script>
     <script src="frontend/js/app.js?v=3"></script>
 </body>
 </html>
