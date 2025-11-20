@@ -238,7 +238,7 @@ const UI = {
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideOut {
-        to { transform: translateX(-100%); opacity: 0; }
+        to { transform: translateY(-20px); opacity: 0; }
     }
 `;
 document.head.appendChild(style);

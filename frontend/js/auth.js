@@ -109,7 +109,7 @@ const Auth = {
         UI.showLoading();
         try {
             await API.login(email, password);
-            UI.showToast('تم تسجيل الدخول بنجاح!', 'success');
+            UI.showToast('مرحباً بك مجدداً! نتمنى لك يوماً دراسياً مثمراً 🚀', 'success');
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1000);

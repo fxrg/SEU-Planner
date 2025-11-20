@@ -286,18 +286,25 @@ const Dashboard = {
         const user = Auth.getCurrentUser();
 
         // Helper to render course list for a given major key
-        const renderCoursesForMajor = (majorKey) => {
+        const renderCoursesForMajor = (majorKey, containerId = 'courses-list') => {
             const major = SEU_COMPLETE_DATA.majors[majorKey];
             if (!major) return;
-            const container = document.getElementById('courses-list');
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
             const courseCodes = major.courses || [];
 
             const searchHTML = `
-                <div class="course-search-box">
-                    <input type="text" 
-                           id="course-search-input" 
-                           placeholder="ابحث عن مقرر (الاسم أو الرمز)...">
-                    <div id="search-count"></div>
+                <div class="course-search-container">
+                    <div class="search-input-wrapper">
+                        <input type="text" 
+                               id="course-search-input" 
+                               class="course-search-input"
+                               placeholder="ابحث عن مقرر (الاسم أو الرمز)...">
+                        <div class="search-icon">
+                            ${UI.getIcon('search') || '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'}
+                        </div>
+                    </div>
                 </div>
             `;
 
@@ -311,66 +318,66 @@ const Dashboard = {
                 };
 
                 return `
-                    <div class="course-card-item" data-code="${code}" data-name="${courseData.name_ar.toLowerCase()}">
-                        <input type="checkbox" id="course-${code}" value="${code}" data-course='${JSON.stringify(courseData)}' class="course-checkbox">
-                        <label for="course-${code}" class="course-card-label">
-                            <div class="course-card-header">
-                                <span class="course-code-badge">${code}</span>
-                                <div class="course-difficulty" title="مستوى الصعوبة">
-                                    ${UI.getIcon('star').repeat(courseData.difficulty || 3)}
+                    <label class="course-card-new" data-code="${code}" data-name="${courseData.name_ar.toLowerCase()}">
+                        <input type="checkbox" id="course-${code}" value="${code}" data-course='${JSON.stringify(courseData)}'>
+                        <div class="course-card-inner">
+                            <div class="course-card-top">
+                                <span class="course-code-tag">${code}</span>
+                                <div class="check-circle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
                             </div>
-                            <div class="course-card-body">
-                                <h4 class="course-name">${courseData.name_ar}</h4>
-                                <span class="course-hours-badge">${courseData.hours || 3} ساعات</span>
+                            <div class="course-title-new">${courseData.name_ar}</div>
+                            <div class="course-meta-new">
+                                <div class="meta-item" title="الساعات المعتمدة">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    ${courseData.hours || 3} ساعات
+                                </div>
+                                <div class="meta-item" title="مستوى الصعوبة">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                    ${courseData.difficulty || 3}/5
+                                </div>
                             </div>
-                            <div class="course-selection-indicator">
-                                ${UI.getIcon('check')}
-                            </div>
-                        </label>
-                    </div>
+                        </div>
+                    </label>
                 `;
             }).join('');
 
-            container.innerHTML = searchHTML + '<div id="courses-container">' + coursesHTML + '</div>';
+            container.innerHTML = searchHTML + '<div id="courses-container" class="courses-grid">' + coursesHTML + '</div>';
 
             // Search behavior
-            const searchInput = document.getElementById('course-search-input');
-            const searchCount = document.getElementById('search-count');
-            const coursesContainer = document.getElementById('courses-container');
-            const allCourseItems = coursesContainer.querySelectorAll('.course-card-item');
+            const searchInput = container.querySelector('#course-search-input');
+            const coursesContainer = container.querySelector('#courses-container');
+            const allCourseItems = coursesContainer.querySelectorAll('.course-card-new');
+            const selectedCountEl = document.getElementById('selected-courses-count');
 
-            searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
+            // Update count function
+            const updateCount = () => {
+                // Count checked inputs within the specific container or globally if needed
+                // Since we might have multiple lists (unlikely but possible), let's scope to the modal
+                const modal = document.getElementById('plan-modal');
+                const count = modal.querySelectorAll('input[type="checkbox"]:checked').length;
+                if (selectedCountEl) selectedCountEl.textContent = count;
+            };
 
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase().trim();
-                let visibleCount = 0;
+            // Add change listeners to checkboxes
+            allCourseItems.forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', updateCount);
+            });
 
-                allCourseItems.forEach(item => {
-                    const code = item.dataset.code.toLowerCase();
-                    const name = item.dataset.name;
-                    const matches = code.includes(searchTerm) || name.includes(searchTerm);
-                    item.style.display = matches ? 'block' : 'none';
-                    if (matches) visibleCount++;
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+
+                    allCourseItems.forEach(item => {
+                        const code = item.dataset.code.toLowerCase();
+                        const name = item.dataset.name;
+                        const matches = code.includes(searchTerm) || name.includes(searchTerm);
+                        item.style.display = matches ? 'block' : 'none';
+                    });
                 });
-
-                if (searchTerm) {
-                    searchCount.textContent = `عرض ${visibleCount} من ${allCourseItems.length} مقرر`;
-                    searchCount.style.color = visibleCount > 0 ? '#28a745' : '#dc3545';
-                } else {
-                    searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
-                    searchCount.style.color = '#666';
-                }
-            });
-
-            searchInput.addEventListener('focus', (e) => {
-                e.target.style.borderColor = '#1a73e8';
-                e.target.style.boxShadow = '0 0 0 3px rgba(26, 115, 232, 0.1)';
-            });
-            searchInput.addEventListener('blur', (e) => {
-                e.target.style.borderColor = '#e0e0e0';
-                e.target.style.boxShadow = 'none';
-            });
+            }
         };
 
         // If logged-in user with a major → render directly
@@ -387,6 +394,7 @@ const Dashboard = {
         const info = `<div class="alert" style="background:#f7f7f7; border:1px solid #eee; padding:10px 12px; border-radius:8px; margin-bottom:12px; color:#666; display: flex; align-items: center; gap: 8px;">
             ${UI.getIcon('eye')} أنت تتصفح كضيف. يمكن رؤية المواد فقط. لإنشاء خطة يلزم تسجيل الدخول.
         </div>`;
+        
         const majorPicker = `
             ${Auth.isGuest() ? info : ''}
             <div class="form-group" style="margin-bottom:12px;">
@@ -397,27 +405,15 @@ const Dashboard = {
             </div>
             <div id="browse-courses"></div>
         `;
+        
         container.innerHTML = majorPicker;
+        
         const browseSelect = document.getElementById('browse-major');
-        const browseCoursesHost = document.getElementById('browse-courses');
+        
         const renderForSelected = () => {
-            // Temporarily point courses-list to host for rendering function
-            const old = document.getElementById('courses-list');
-            const temp = document.createElement('div');
-            temp.id = 'courses-list-temp';
-            browseCoursesHost.innerHTML = '';
-            browseCoursesHost.appendChild(temp);
-            // Render into temp then move its children back
-            const original = document.getElementById('courses-list');
-            original.id = 'courses-list-orig';
-            temp.id = 'courses-list';
-            renderCoursesForMajor(browseSelect.value);
-            // Move content into host and restore ids
-            const rendered = document.getElementById('courses-container')?.parentElement;
-            if (rendered) browseCoursesHost.innerHTML = rendered.outerHTML;
-            document.getElementById('courses-list').id = 'courses-list-temp-done';
-            document.getElementById('courses-list-orig').id = 'courses-list';
+            renderCoursesForMajor(browseSelect.value, 'browse-courses');
         };
+        
         browseSelect.addEventListener('change', renderForSelected);
         renderForSelected();
     },

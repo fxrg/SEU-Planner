@@ -308,70 +308,123 @@
                 <div class="page-header">
                     <h2>⚙️ الإعدادات</h2>
                 </div>
-                <div class="settings-content">
-                    <div class="settings-section">
-                        <h3>معلومات الحساب</h3>
-                        <form id="profile-form" class="form">
-                            <div class="form-group">
-                                <label>الاسم الكامل</label>
-                                <input type="text" id="profile-name" required>
+                <div class="settings-grid">
+                    <!-- Profile Settings -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                             </div>
-                            <div class="form-group">
-                                <label>البريد الإلكتروني</label>
-                                <input type="email" id="profile-email" disabled>
-                            </div>
-                            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
-                        </form>
+                            <h3>معلومات الحساب</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profile-form" class="form">
+                                <div class="form-group">
+                                    <label>الاسم الكامل</label>
+                                    <input type="text" id="profile-name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>البريد الإلكتروني</label>
+                                    <input type="email" id="profile-email" class="form-control" disabled>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">حفظ التغييرات</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="settings-section">
-                        <h3>تفضيلات الإشعارات</h3>
-                        <form id="notif-form" class="form">
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="notif-enabled">
-                                    تفعيل الإشعارات اليومية
-                                </label>
+
+                    <!-- Account Management -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="icon-box" style="color: #dc3545; background: rgba(220, 53, 69, 0.1);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                             </div>
+                            <h3>إدارة الحساب</h3>
+                        </div>
+                        <div class="card-body">
                             <div class="form-group">
-                                <label>وقت الإشعار</label>
-                                <input type="time" id="notif-time" value="07:00">
+                                <label>تغيير البريد الإلكتروني</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="email" id="new-email-input" class="form-control" placeholder="البريد الجديد">
+                                    <button type="button" id="change-email-btn" class="btn btn-outline">تحديث</button>
+                                </div>
                             </div>
+                            <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
                             <div class="form-group">
-                                <label>وقت بداية الدراسة يومياً</label>
-                                <input type="time" id="study-start-time" value="09:00">
+                                <label style="color: #dc3545;">منطقة الخطر</label>
+                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 10px;">حذف الحساب سيؤدي لمسح جميع بياناتك وخططك الدراسية نهائياً.</p>
+                                <button type="button" id="delete-account-btn" class="btn btn-danger btn-full">حذف الحساب نهائياً</button>
                             </div>
-                            <div class="form-group">
-                                <label>كثافة الدراسة</label>
-                                <select id="study-intensity">
-                                    <option value="light">خفيف - ساعتان يومياً (جلسة واحدة)</option>
-                                    <option value="medium" selected>متوسط - 4 ساعات يومياً (جلستان)</option>
-                                    <option value="intensive">مكثف - 6 ساعات يومياً (3 جلسات)</option>
-                                </select>
-                                <small style="display: block; margin-top: 8px; color: #666;">
-                                    ℹ️ تغيير الكثافة سيؤدي لإعادة توليد الخطة الدراسية بالكامل
-                                </small>
-                            </div>
-                            <button type="submit" class="btn btn-primary">حفظ التفضيلات</button>
-                        </form>
+                        </div>
                     </div>
-                    <div class="settings-section">
-                        <h3>تفضيلات التقويم</h3>
-                        <form id="calendar-form" class="form">
-                            <div class="form-group">
-                                <label>نوع التقويم</label>
-                                <select id="calendar-type">
-                                    <option value="gregorian" selected>ميلادي (Gregorian)</option>
-                                    <option value="hijri">هجري (Hijri)</option>
-                                </select>
+
+                    <!-- Notification Settings -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                             </div>
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="show-both-dates">
-                                    عرض التاريخين معاً
-                                </label>
+                            <h3>تفضيلات الإشعارات</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="notif-form" class="form">
+                                <div class="form-group checkbox-group">
+                                    <label class="switch">
+                                        <input type="checkbox" id="notif-enabled">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span>تفعيل الإشعارات اليومية</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>وقت الإشعار</label>
+                                    <input type="time" id="notif-time" class="form-control" value="07:00">
+                                </div>
+                                <div class="form-group">
+                                    <label>وقت بداية الدراسة يومياً</label>
+                                    <input type="time" id="study-start-time" class="form-control" value="09:00">
+                                </div>
+                                <div class="form-group">
+                                    <label>كثافة الدراسة</label>
+                                    <select id="study-intensity" class="form-control">
+                                        <option value="light">خفيف - ساعتان يومياً (جلسة واحدة)</option>
+                                        <option value="medium" selected>متوسط - 4 ساعات يومياً (جلستان)</option>
+                                        <option value="intensive">مكثف - 6 ساعات يومياً (3 جلسات)</option>
+                                    </select>
+                                    <small class="form-hint">
+                                        ℹ️ تغيير الكثافة سيؤدي لإعادة توليد الخطة الدراسية بالكامل
+                                    </small>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">حفظ التفضيلات</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Settings -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                             </div>
-                            <button type="submit" class="btn btn-primary">حفظ التفضيلات</button>
-                        </form>
+                            <h3>تفضيلات التقويم</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="calendar-form" class="form">
+                                <div class="form-group">
+                                    <label>نوع التقويم</label>
+                                    <select id="calendar-type" class="form-control">
+                                        <option value="gregorian" selected>ميلادي (Gregorian)</option>
+                                        <option value="hijri">هجري (Hijri)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <label class="switch">
+                                        <input type="checkbox" id="show-both-dates">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span>عرض التاريخين معاً</span>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">حفظ التفضيلات</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -380,31 +433,96 @@
 
     <!-- Plan Generator Modal -->
     <div id="plan-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>إنشاء خطة دراسية</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="plan-form">
-                    <div class="form-group">
-                        <label>اختر المواد:</label>
-                        <div id="courses-list" class="courses-list"></div>
+        <div class="modal-content modal-lg">
+            <form id="plan-form" class="plan-form-layout">
+                <div class="modal-header">
+                    <div class="header-title">
+                        <div class="icon-box-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h3>إنشاء خطة دراسية جديدة</h3>
                     </div>
-                    <div class="form-group">
-                        <label>الترم:</label>
-                        <select id="plan-term" required>
-                            <option value="1">الترم الأول (2025-2026)</option>
-                            <option value="2" disabled>الترم الثاني (مغلق حتى 11 يناير 2026)</option>
-                        </select>
+                    <button type="button" class="modal-close">&times;</button>
+                </div>
+                
+                <div class="modal-body custom-scrollbar">
+                    <div class="plan-wizard-step">
+                        <div class="step-header">
+                            <span class="step-number">1</span>
+                            <h4>اختر المواد الدراسية</h4>
+                            <p class="step-desc">حدد المواد التي تدرسها هذا الترم لإضافتها لجدولك</p>
+                        </div>
+                        <div id="courses-list" class="courses-selection-area"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">
-                        إنشاء الخطة
+
+                    <div class="plan-wizard-step">
+                        <div class="step-header">
+                            <span class="step-number">2</span>
+                            <h4>إعدادات الترم</h4>
+                        </div>
+                        <div class="form-group term-select-group">
+                            <label>الفصل الدراسي الحالي</label>
+                            <div class="custom-select-wrapper">
+                                <select id="plan-term" class="form-control custom-select" required>
+                                    <option value="1">الترم الأول (2025-2026)</option>
+                                    <option value="2" disabled>الترم الثاني (مغلق حتى 11 يناير 2026)</option>
+                                </select>
+                                <div class="select-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="selection-info">
+                        <span class="info-label">المواد المختارة:</span>
+                        <span id="selected-courses-count" class="badge-count">0</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-create-plan">
+                        <span>إنشاء الخطة</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        SEU Planner
+                    </h3>
+                    <p>رفيقك الذكي لتنظيم دراستك الجامعية وتحقيق أهدافك الأكاديمية. نساعدك على إدارة وقتك بكفاءة والوصول إلى النجاح.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="#" onclick="UI.showPage('dashboard'); return false;">الرئيسية</a></li>
+                        <li><a href="#" onclick="UI.showPage('calendar'); return false;">التقويم</a></li>
+                        <li><a href="#" onclick="UI.showPage('sessions'); return false;">جلسات مشتركة</a></li>
+                        <li><a href="#" onclick="UI.showPage('settings'); return false;">الإعدادات</a></li>
+                    </ul>
+                </div>
+                <div class="footer-legal">
+                    <h4>معلومات</h4>
+                    <ul>
+                        <li><a href="about.html">من نحن</a></li>
+                        <li><a href="privacy.html">سياسة الخصوصية</a></li>
+                        <li><a href="terms.html">شروط الاستخدام</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SEU Planner. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Firebase & Scripts -->
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

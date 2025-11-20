@@ -44,6 +44,93 @@ const Settings = {
                 }
             });
         }
+
+        // Account Management
+        const changeEmailBtn = document.getElementById('change-email-btn');
+        if (changeEmailBtn) {
+            changeEmailBtn.addEventListener('click', () => this.changeEmail());
+        }
+
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        if (deleteAccountBtn) {
+            deleteAccountBtn.addEventListener('click', () => this.deleteAccount());
+        }
+    },
+
+    async changeEmail() {
+        const newEmail = document.getElementById('new-email-input').value.trim();
+        if (!newEmail || !newEmail.includes('@')) {
+            UI.showToast('الرجاء إدخال بريد إلكتروني صحيح', 'warning');
+            return;
+        }
+
+        if (Auth.isGuest()) {
+            UI.showToast('لا يمكن تغيير البريد لحساب ضيف', 'warning');
+            return;
+        }
+
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            UI.showToast('يجب تسجيل الدخول أولاً', 'error');
+            return;
+        }
+
+        UI.showLoading();
+        try {
+            await user.updateEmail(newEmail);
+            UI.showToast('تم تحديث البريد الإلكتروني بنجاح', 'success');
+            document.getElementById('profile-email').value = newEmail;
+            document.getElementById('new-email-input').value = '';
+            
+            // Update local storage
+            const localUser = Auth.getCurrentUser();
+            if (localUser) {
+                localUser.email = newEmail;
+                localStorage.setItem(USER_KEY, JSON.stringify(localUser));
+            }
+        } catch (error) {
+            console.error('Update Email Error:', error);
+            if (error.code === 'auth/requires-recent-login') {
+                UI.showToast('يجب إعادة تسجيل الدخول لتغيير البريد الإلكتروني', 'warning');
+                setTimeout(() => Auth.logout(), 2000);
+            } else {
+                UI.showToast('خطأ في تحديث البريد: ' + error.message, 'error');
+            }
+        } finally {
+            UI.hideLoading();
+        }
+    },
+
+    async deleteAccount() {
+        if (!confirm('هل أنت متأكد تماماً؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+
+        if (Auth.isGuest()) {
+            Auth.logout();
+            return;
+        }
+
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            UI.showToast('يجب تسجيل الدخول أولاً', 'error');
+            return;
+        }
+
+        UI.showLoading();
+        try {
+            await user.delete();
+            UI.showToast('تم حذف الحساب بنجاح', 'success');
+            Auth.logout();
+        } catch (error) {
+            console.error('Delete Account Error:', error);
+            if (error.code === 'auth/requires-recent-login') {
+                UI.showToast('يجب إعادة تسجيل الدخول لحذف الحساب', 'warning');
+                setTimeout(() => Auth.logout(), 2000);
+            } else {
+                UI.showToast('خطأ في حذف الحساب: ' + error.message, 'error');
+            }
+        } finally {
+            UI.hideLoading();
+        }
     },
 
     loadProfile() {

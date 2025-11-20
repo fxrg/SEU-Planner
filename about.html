@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من نحن - SEU Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="frontend/css/dashboard.css">
+    <style>
+        body { background: var(--bg-secondary); }
+        .legal-page { max-width: 800px; margin: 40px auto; padding: 30px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .legal-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .legal-content h2 { color: var(--primary); margin-top: 25px; font-size: 1.2rem; }
+        .legal-content p { line-height: 1.8; color: #555; }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: var(--text-secondary); text-decoration: none; }
+        body.dark-mode .legal-page { background: #1a1a2e; color: #eee; }
+        body.dark-mode .legal-content p { color: #ccc; }
+        .team-member { text-align: center; margin-top: 30px; }
+        .team-avatar { width: 80px; height: 80px; background: #eee; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="dashboard.html" class="back-btn">← العودة للوحة التحكم</a>
+        <div class="legal-page">
+            <div class="legal-header">
+                <h1>من نحن</h1>
+                <p>قصة SEU Planner</p>
+            </div>
+            <div class="legal-content">
+                <p>SEU Planner هو مشروع طلابي طموح يهدف إلى تسهيل الحياة الأكاديمية لطلاب الجامعة السعودية الإلكترونية.</p>
+
+                <h2>رؤيتنا</h2>
+                <p>أن نكون الرفيق الرقمي الأول لكل طالب، نساعده على تنظيم وقته، متابعة دراسته، وتحقيق أهدافه الأكاديمية بأقل جهد ممكن.</p>
+
+                <h2>لماذا أنشأنا هذا الموقع؟</h2>
+                <p>لاحظنا الصعوبات التي يواجهها الطلاب في تنظيم جداول المذاكرة، خاصة مع نظام التعليم المدمج. لذا قمنا بتطوير هذه الأداة لتكون حلاً ذكياً وبسيطاً ومجانياً للجميع.</p>
+
+                <div class="team-member">
+                    <div class="team-avatar">🎓</div>
+                    <h3>فريق التطوير</h3>
+                    <p> طالب من الجامعة الشغوفين بالتقنية والبرمجة.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="frontend/js/dark-mode.js"></script>
+</body>
+</html>
