@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - SEU Planner</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="frontend/css/dashboard.css">
+    <link rel="stylesheet" href="frontend/css/calendar.css">
+    <link rel="stylesheet" href="frontend/css/planner.css">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    SEU Planner
+                </h1>
+            </div>
+            
+            <!-- Dark Mode Toggle -->
+            <button id="dark-mode-toggle" class="dark-mode-btn" title="تبديل الوضع الداكن">
+                <span class="icon-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+                <span class="icon-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+            </button>
+            
+            <!-- Burger Menu Button -->
+            <button class="burger-menu" id="burger-menu" aria-label="القائمة">
+                <div class="burger-icon"></div>
+            </button>
+
+            <div class="nav-overlay" id="nav-overlay"></div>
+            
+            <div class="nav-links" id="nav-links">
+                <a href="#" data-page="dashboard" class="nav-link active">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="#" data-page="calendar" class="nav-link">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+                    <span>التقويم</span>
+                </a>
+                <a href="#" data-page="notifications" class="nav-link">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
+                    <span>الإشعارات</span>
+                    <span class="badge" id="notif-badge">0</span>
+                </a>
+                <a href="#" data-page="sessions" class="nav-link">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                    <span>جلسة مشتركة</span>
+                </a>
+                <a href="#" data-page="settings" class="nav-link">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+                    <span>الإعدادات</span>
+                </a>
+                <a href="#" id="logout-btn" class="nav-link">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </div>
+            <div class="nav-user">
+                <span id="user-name">المستخدم</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="app">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="container">
+                <div class="page-header">
+                    <h2>لوحة التحكم</h2>
+                    <div class="countdown-container">
+                        <div class="countdown-box">
+                            <span class="countdown-icon"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+                            <div>
+                                <div class="countdown-label">باقي على الاختبارات النهائية</div>
+                                <div class="countdown-value" id="exam-countdown">32 يوم</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-sessions">0</div>
+                            <div class="stat-label">إجمالي الجلسات</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="completed-sessions">0</div>
+                            <div class="stat-label">جلسات مكتملة</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="study-hours">0</div>
+                            <div class="stat-label">ساعات دراسة</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="progress-percent">0%</div>
+                            <div class="stat-label">نسبة الإنجاز</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Sessions -->
+                <div id="today-sessions-section" class="section">
+                    <div class="section-header">
+                        <h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-left: 8px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> جلسات اليوم</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-sm btn-primary" id="refresh-today">تحديث</button>
+                            <button class="btn btn-sm btn-danger" id="delete-plan" style="background: #dc3545;">حذف الخطة</button>
+                        </div>
+                    </div>
+                    <div id="today-sessions" class="sessions-list">
+                        <div class="empty-state">
+                            <span class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
+                            <p>لا توجد جلسات اليوم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Plan Section -->
+                <div id="no-plan-section" class="section hidden">
+                    <div class="empty-state">
+                        <span class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg></span>
+                        <h3>لا توجد خطة دراسية</h3>
+                        <p>أنشئ خطتك الدراسية لبدء رحلة النجاح!</p>
+                        <button class="btn btn-primary" id="show-plan-generator">
+                            إنشاء خطة دراسية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Page -->
+        <div id="calendar-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>📅 التقويم الدراسي</h2>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="btn btn-sm" id="prev-week">السابق</button>
+                        <h3 id="calendar-title">الأسبوع الحالي</h3>
+                        <button class="btn btn-sm" id="next-week">التالي</button>
+                    </div>
+                    <div id="calendar-grid" class="calendar-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Page -->
+        <div id="notifications-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>🔔 الإشعارات</h2>
+                    <button class="btn btn-sm" id="mark-all-read">تحديد الكل كمقروء</button>
+                </div>
+                <div id="notifications-list" class="notifications-list"></div>
+            </div>
+        </div>
+
+        <!-- Sessions Page (Create/Join) -->
+        <div id="sessions-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>👥 جلسة مذاكرة مشتركة</h2>
+                </div>
+
+                <div style="display: grid; gap: 20px; grid-template-columns: 1fr;">
+                    <!-- Create Session Card -->
+                    <div class="card session-create-card" style="background: linear-gradient(135deg, #e0e7ff 0%, #e9d5ff 100%); color: #4c1d95; border: none; padding: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                            <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <h3 style="margin: 0; font-size: 20px; font-weight: 600; color: #5b21b6;">إنشاء جلسة جديدة</h3>
+                                <p style="margin: 4px 0 0 0; opacity: 0.8; font-size: 13px; color: #6b21a8;">أنشئ جلسة مذاكرة وشارك الكود مع أصدقائك</p>
+                            </div>
+                        </div>
+                        <form id="session-create-form" class="form" onsubmit="return false">
+                            <div style="display: grid; gap: 12px; grid-template-columns: 1fr;">
+                                <div class="form-group">
+                                    <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> اسم الجلسة</label>
+                                    <input type="text" id="session-name" placeholder="مثال: مذاكرة IT241" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                </div>
+                                <div style="display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                                    <div class="form-group">
+                                        <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> المدة (ساعات)</label>
+                                        <input type="number" id="session-hours" min="0.5" max="12" step="0.5" value="3" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg> فترات الراحة</label>
+                                        <input type="number" id="session-breaks" min="0" max="10" value="2" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="color: #5b21b6; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> مدة الاستراحة (د)</label>
+                                        <input type="number" id="session-break-duration" min="5" max="30" step="5" value="15" required style="background: white; border: 2px solid #c4b5fd; color: #4c1d95; padding: 12px; border-radius: 8px; width: 100%; font-size: 15px;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="session-create-btn" class="btn btn-primary" type="button" style="margin-top: 16px; width: 100%; padding: 14px; font-size: 16px; font-weight: 600; background: #7c3aed; color: white; border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); touch-action: manipulation;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> إنشاء الجلسة الآن
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Join Session Card -->
+                    <div class="card session-join-card" style="background: linear-gradient(135deg, #fce7f3 0%, #fecaca 100%); color: #9f1239; border: none; padding: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                            <div style="width: 48px; height: 48px; background: rgba(244, 63, 94, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <h3 style="margin: 0; font-size: 20px; font-weight: 600; color: #be123c;">الانضمام إلى جلسة</h3>
+                                <p style="margin: 4px 0 0 0; opacity: 0.8; font-size: 13px; color: #be123c;">أدخل الكود المشترك للانضمام إلى جلسة موجودة</p>
+                            </div>
+                        </div>
+                        <form id="session-join-form" class="form" onsubmit="return false">
+                            <div class="session-join-wrapper" style="display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap;">
+                                <div class="form-group" style="flex: 1; margin: 0; min-width: 200px;">
+                                    <label style="color: #be123c; font-weight: 500; margin-bottom: 6px; display: block; font-size: 14px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> كود الجلسة</label>
+                                    <input type="text" id="session-code-input" placeholder="مثل: ABC123" maxlength="10" required style="background: white; border: 2px solid #fda4af; color: #9f1239; padding: 12px 16px; border-radius: 8px; width: 100%; font-size: 17px; letter-spacing: 2px; text-align: center; text-transform: uppercase; height: 48px;" />
+                                </div>
+                                <button id="session-join-btn" class="btn btn-secondary" type="button" style="padding: 0 24px; font-size: 16px; font-weight: 600; background: #e11d48; color: white; border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3); white-space: nowrap; align-self: flex-end; height: 48px; margin-bottom: 0; touch-action: manipulation; min-width: 120px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.48-.56.93-1.23 1.35-2h-4.35z"></path><path d="M12 15l-3-3a23 23 0 0 1 0-15 23 23 0 0 1 15 0 23 23 0 0 1-3 3l-3 3"></path></svg> انضمام
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Detail Page (Focused View) -->
+        <div id="session-detail-page" class="page">
+            <div class="container">
+                <div class="page-header" style="justify-content:space-between; align-items:center;">
+                    <h2 id="session-title">👥 جلسة مذاكرة</h2>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <span id="status-chip" style="padding:6px 10px; border-radius:16px; font-size:13px; background:#ffe9c7; color:#b26b00;">بانتظار البدء</span>
+                        <button class="btn btn-sm" onclick="UI.showPage('sessions-page')">رجوع</button>
+                    </div>
+                </div>
+
+                <div class="card" id="current-session">
+                    <div class="section-header" style="justify-content:space-between;">
+                        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+                            <div><strong>الكود:</strong> <span id="session-code-display">—</span>
+                                <button id="copy-code-btn" class="btn btn-sm" title="نسخ الكود" style="margin-right:8px;">نسخ</button>
+                            </div>
+                            <div><strong>المنشئ:</strong> <span id="session-owner">—</span></div>
+                            <div><strong>المشاركون:</strong> <span id="participants-count">0</span></div>
+                        </div>
+                        <div>
+                            <button id="start-session-btn" class="btn btn-sm btn-primary" style="display:none;">بدء الجلسة</button>
+                            <button id="end-session-btn" class="btn btn-sm btn-danger" style="display:none;">إنهاء</button>
+                            <button id="leave-session-btn" class="btn btn-sm">مغادرة</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap;">
+                        <div class="countdown-box" style="transform: scale(1.1);">
+                            <span class="countdown-icon">⏳</span>
+                            <div>
+                                <div class="countdown-label">العد التنازلي</div>
+                                <div class="countdown-value" id="session-countdown">--:--:--</div>
+                            </div>
+                        </div>
+                        <div class="info" style="display:flex; gap:20px; align-items:center;">
+                            <div><strong>الحالة:</strong> <span id="session-status">بانتظار البدء</span></div>
+                        </div>
+                    </div>
+
+                    <div class="section" style="margin-top:16px;">
+                        <h4>المشاركون</h4>
+                        <ul id="participants-list" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; list-style:none; padding:0; margin:0;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h2>⚙️ الإعدادات</h2>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-section">
+                        <h3>معلومات الحساب</h3>
+                        <form id="profile-form" class="form">
+                            <div class="form-group">
+                                <label>الاسم الكامل</label>
+                                <input type="text" id="profile-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>البريد الإلكتروني</label>
+                                <input type="email" id="profile-email" disabled>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                        </form>
+                    </div>
+                    <div class="settings-section">
+                        <h3>تفضيلات الإشعارات</h3>
+                        <form id="notif-form" class="form">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="notif-enabled">
+                                    تفعيل الإشعارات اليومية
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>وقت الإشعار</label>
+                                <input type="time" id="notif-time" value="07:00">
+                            </div>
+                            <div class="form-group">
+                                <label>وقت بداية الدراسة يومياً</label>
+                                <input type="time" id="study-start-time" value="09:00">
+                            </div>
+                            <div class="form-group">
+                                <label>كثافة الدراسة</label>
+                                <select id="study-intensity">
+                                    <option value="light">خفيف - ساعتان يومياً (جلسة واحدة)</option>
+                                    <option value="medium" selected>متوسط - 4 ساعات يومياً (جلستان)</option>
+                                    <option value="intensive">مكثف - 6 ساعات يومياً (3 جلسات)</option>
+                                </select>
+                                <small style="display: block; margin-top: 8px; color: #666;">
+                                    ℹ️ تغيير الكثافة سيؤدي لإعادة توليد الخطة الدراسية بالكامل
+                                </small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ التفضيلات</button>
+                        </form>
+                    </div>
+                    <div class="settings-section">
+                        <h3>تفضيلات التقويم</h3>
+                        <form id="calendar-form" class="form">
+                            <div class="form-group">
+                                <label>نوع التقويم</label>
+                                <select id="calendar-type">
+                                    <option value="gregorian" selected>ميلادي (Gregorian)</option>
+                                    <option value="hijri">هجري (Hijri)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="show-both-dates">
+                                    عرض التاريخين معاً
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">حفظ التفضيلات</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Plan Generator Modal -->
+    <div id="plan-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إنشاء خطة دراسية</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="plan-form">
+                    <div class="form-group">
+                        <label>اختر المواد:</label>
+                        <div id="courses-list" class="courses-list"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>الترم:</label>
+                        <select id="plan-term" required>
+                            <option value="1">الترم الأول (2025-2026)</option>
+                            <option value="2" disabled>الترم الثاني (مغلق حتى 11 يناير 2026)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        إنشاء الخطة
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase & Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script>
+        window.FIREBASE_CONFIG = {
+            apiKey: "AIzaSyA2oY6ItciZBjRD6qASZ0xTx3G5HKE4_ro",
+            authDomain: "seu-planner.firebaseapp.com",
+            projectId: "seu-planner",
+            storageBucket: "seu-planner.firebasestorage.app",
+            messagingSenderId: "1040890051559",
+            appId: "1:1040890051559:web:b1ef6c49f284f4a589db42",
+            measurementId: "G-8PWYR81R97"
+        };
+    </script>
+    <script src="frontend/js/firebase-init.js"></script>
+    <script src="frontend/js/firebase-status.js"></script>
+    <script src="frontend/js/config.js"></script>
+    <script src="frontend/js/seu-complete-data.js"></script>
+    <script src="frontend/js/majors-data.js"></script>
+    <script src="frontend/js/dark-mode.js"></script>
+    <script src="frontend/js/api.js"></script>
+    <script src="frontend/js/ui.js"></script>
+    <script src="frontend/js/auth.js"></script>
+    <script src="frontend/js/study-planner.js"></script>
+    <script src="frontend/js/dashboard.js"></script>
+    <script src="frontend/js/calendar.js"></script>
+    <script src="frontend/js/notifications.js"></script>
+    <script src="frontend/js/sessions.js"></script>
+    <script src="frontend/js/settings.js"></script>
+    <script src="frontend/js/app.js"></script>
+</body>
+</html>

@@ -89,10 +89,16 @@ const UI = {
 
     // Show/hide page
     showPage(pageId) {
+        const targetPage = document.getElementById(pageId);
+        if (!targetPage) {
+            console.warn(`Page ${pageId} not found`);
+            return;
+        }
+
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
         });
-        document.getElementById(pageId).classList.add('active');
+        targetPage.classList.add('active');
 
         // Update nav links
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -102,12 +108,14 @@ const UI = {
             }
         });
 
-        // Hide navbar on auth pages
+        // Navbar handling (only if navbar exists)
         const navbar = document.getElementById('navbar');
-        if (pageId === 'login-page' || pageId === 'register-page') {
-            navbar.classList.add('hidden');
-        } else {
-            navbar.classList.remove('hidden');
+        if (navbar) {
+            if (pageId === 'login-page' || pageId === 'register-page') {
+                navbar.classList.add('hidden');
+            } else {
+                navbar.classList.remove('hidden');
+            }
         }
     },
 

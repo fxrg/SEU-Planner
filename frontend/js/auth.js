@@ -1,14 +1,18 @@
 // Authentication Module
 const Auth = {
-    async init() {
-        // Load majors for registration
-        await this.loadMajors();
+    init() {
+        // This is now handled by specific page inits
+    },
 
+    async initLoginPage() {
         // Login form
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await this.handleLogin();
-        });
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleLogin();
+            });
+        }
 
         // Guest login
         const guestBtn = document.getElementById('guest-login');
@@ -19,28 +23,28 @@ const Auth = {
             });
         }
 
+        // Forgot Password
+        const forgotBtn = document.getElementById('forgot-password-link');
+        if (forgotBtn) {
+            forgotBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleForgotPassword();
+            });
+        }
+    },
+
+    async initRegisterPage() {
+        // Load majors for registration
+        await this.loadMajors();
+
         // Register form
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await this.handleRegister();
-        });
-
-        // Toggle forms
-        document.getElementById('show-register').addEventListener('click', (e) => {
-            e.preventDefault();
-            UI.showPage('register-page');
-        });
-
-        document.getElementById('show-login').addEventListener('click', (e) => {
-            e.preventDefault();
-            UI.showPage('login-page');
-        });
-
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.logout();
-        });
+        const registerForm = document.getElementById('register-form');
+        if (registerForm) {
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleRegister();
+            });
+        }
     },
 
     async loadMajors() {
@@ -106,10 +110,45 @@ const Auth = {
         try {
             await API.login(email, password);
             UI.showToast('تم تسجيل الدخول بنجاح!', 'success');
-            UI.showPage('dashboard-page');
-            await Dashboard.load();
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
         } catch (error) {
             console.error('Login Error:', error);
+            const msg = this.getErrorMessage(error);
+            UI.showToast(msg, 'error');
+        } finally {
+            UI.hideLoading();
+        }
+    },
+
+    async handleForgotPassword() {
+        const emailInput = document.getElementById('login-email');
+        let email = emailInput ? emailInput.value.trim() : '';
+        
+        if (!email) {
+            // If email field is empty, focus it and show toast, or prompt
+            // Using prompt for simplicity if field is empty, or just ask them to fill it
+            UI.showToast('الرجاء إدخال البريد الإلكتروني في الحقل المخصص أولاً', 'info');
+            if (emailInput) emailInput.focus();
+            return;
+        }
+        
+        if (!email.includes('@')) {
+            UI.showToast('الرجاء إدخال بريد إلكتروني صحيح', 'warning');
+            return;
+        }
+
+        if (!confirm(`هل تريد إرسال رابط استعادة كلمة المرور إلى: ${email}؟`)) {
+            return;
+        }
+
+        UI.showLoading();
+        try {
+            const result = await API.sendPasswordResetEmail(email);
+            UI.showToast(result.message, 'success');
+        } catch (error) {
+            console.error('Reset Password Error:', error);
             const msg = this.getErrorMessage(error);
             UI.showToast(msg, 'error');
         } finally {
@@ -141,8 +180,9 @@ const Auth = {
             const storageMode = API.useFirebase() ? `تم حفظ الحساب في Firebase ${UI.getIcon('cloud')}` : `تم حفظ الحساب محلياً ${UI.getIcon('save')} (لم يتم تفعيل Firebase)`;
             UI.showToast('تم إنشاء الحساب بنجاح! ' + storageMode, 'success');
             
-            UI.showPage('dashboard-page');
-            await Dashboard.load();
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
         } catch (error) {
             console.error('Register Error:', error);
             const msg = this.getErrorMessage(error);
@@ -175,7 +215,9 @@ const Auth = {
         this.disableGuestMode();
         API.removeToken();
         UI.showToast('تم تسجيل الخروج', 'info');
-        UI.showPage('login-page');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
     },
 
     isLoggedIn() {
@@ -206,8 +248,9 @@ const Auth = {
 
     loginAsGuest() {
         this.enableGuestMode();
-        UI.showToast('تم الدخول كضيف. يمكنك التصفح فقط.', 'info');
-        UI.showPage('dashboard-page');
-        Dashboard.load();
+        UI.showToast('تم الدخول كضيف. جاري التحويل...', 'info');
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 100);
     },
 };

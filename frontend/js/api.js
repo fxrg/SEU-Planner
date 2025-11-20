@@ -61,6 +61,22 @@ const API = {
         }
     },
 
+    async sendPasswordResetEmail(email) {
+        if (this.useFirebase()) {
+            await firebase.auth().sendPasswordResetEmail(email);
+            return { success: true, message: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني' };
+        } else {
+            await this.delay();
+            // Local mode simulation
+            const users = JSON.parse(localStorage.getItem('seu_users') || '[]');
+            const user = users.find(u => u.email === email);
+            if (!user) {
+                throw new Error('البريد الإلكتروني غير مسجل');
+            }
+            return { success: true, message: 'تم إرسال رابط إعادة تعيين كلمة المرور (محاكاة)' };
+        }
+    },
+
     async register(userData) {
         if (this.useFirebase()) {
             const cred = await firebase.auth().createUserWithEmailAndPassword(userData.email, userData.password);

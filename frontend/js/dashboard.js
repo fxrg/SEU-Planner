@@ -524,7 +524,7 @@ const Dashboard = {
         if (Auth.isGuest() || !Auth.isLoggedIn()) {
             UI.showToast('لإنشاء خطة يلزم تسجيل الدخول أولاً', 'warning');
             UI.hideModal('plan-modal');
-            UI.showPage('login-page');
+            window.location.href = 'login.html';
             return;
         }
         const checkboxes = document.querySelectorAll('#courses-list input[type="checkbox"]:checked');
