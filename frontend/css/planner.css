@@ -1041,8 +1041,16 @@ body.dark-mode .modal-body {
 
 body.dark-mode .modal-header h3,
 body.dark-mode .step-header h4,
-body.dark-mode .course-title_new {
-    color: var(--text-primary);
+body.dark-mode .course-title-new {
+    color: #ffffff !important;
+}
+
+body.dark-mode .course-meta-new {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .meta-item {
+    color: #e2e8f0 !important;
 }
 
 body.dark-mode .course-card-inner {
