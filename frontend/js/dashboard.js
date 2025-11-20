@@ -7,6 +7,12 @@ const Dashboard = {
         const user = Auth.getCurrentUser();
         if (user) {
             document.getElementById('user-name').textContent = user.full_name;
+            
+            // Update mobile user name if element exists
+            const mobileUserName = document.getElementById('mobile-user-name');
+            if (mobileUserName) {
+                mobileUserName.textContent = user.first_name || user.full_name.split(' ')[0];
+            }
         }
 
         // Update countdown
@@ -166,29 +172,52 @@ const Dashboard = {
         
         // عنوان المادة مع رقم الموديول
         const titleWithModule = moduleNumber ? 
-            `${courseName} <span style="display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #5a9fff, #4080d0); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-right: 10px; box-shadow: 0 2px 4px rgba(90, 159, 255, 0.3);">${UI.getIcon('book')} موديول ${moduleNumber}</span>` : 
+            `${courseName} <span class="module-badge">موديول ${moduleNumber}</span>` : 
             courseName;
 
         return `
-            <div class="session-card ${completed ? 'completed' : ''} ${isFinalReview ? 'final-review' : ''}">
-                <div class="session-info">
-                    <div class="session-title">${isFinalReview ? UI.getIcon('fire') + ' ' : ''}${titleWithModule}</div>
-                    <div class="session-meta">
-                        <span>${UI.getIcon('timer')} ${duration}</span>
-                        <span>${UI.getIcon('book')} ${type}</span>
-                        <span>${UI.getIcon('hash')} ${session.course_code}</span>
-                        <span>${UI.getIcon('clock')} ${UI.formatClock(session.scheduled_time)}</span>
-                        ${isFinalReview ? `<span style="color: #ff5722; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">${UI.getIcon('warning')} مراجعة نهائية</span>` : ''}
+            <div class="session-card-pro ${completed ? 'completed' : ''} ${isFinalReview ? 'final-review' : ''}">
+                <div class="card-status-line"></div>
+                <div class="card-main-content">
+                    <div class="card-header-row">
+                        <span class="course-code-pill">${session.course_code}</span>
+                        <span class="time-pill">${UI.getIcon('clock')} ${UI.formatClock(session.scheduled_time)}</span>
                     </div>
-                    ${session.notes ? `<div class="session-notes" style="margin-top: 8px; color: ${isFinalReview ? '#ff5722' : '#666'}; font-size: 14px;">${session.notes}</div>` : ''}
-                    <span class="session-type-badge session-type-${session.session_type}" style="${isFinalReview ? 'background: #ff5722; color: white;' : ''}">${type}</span>
+                    
+                    <h3 class="session-title-pro">
+                        ${isFinalReview ? '<span class="fire-icon">🔥</span>' : ''}
+                        ${titleWithModule}
+                    </h3>
+                    
+                    <div class="session-meta-grid">
+                        <div class="meta-item-pro">
+                            <span class="icon-wrapper">${UI.getIcon('timer')}</span>
+                            <span class="meta-text">${duration}</span>
+                        </div>
+                        <div class="meta-item-pro">
+                            <span class="icon-wrapper">${UI.getIcon('book')}</span>
+                            <span class="meta-text">${type}</span>
+                        </div>
+                    </div>
+
+                    ${session.notes ? `
+                        <div class="session-note-pro">
+                            ${UI.getIcon('edit')} ${session.notes}
+                        </div>
+                    ` : ''}
                 </div>
-                <div class="session-actions">
-                    <button class="btn btn-sm ${completed ? 'btn-secondary' : isFinalReview ? 'btn-danger' : 'btn-primary'} complete-btn" 
-                            data-id="${session.id}">
-                        ${completed ? 'مكتملة' : 'إتمام'}
+
+                <div class="card-actions-column">
+                    <button class="action-btn-pro complete-btn ${completed ? 'is-completed' : ''}" 
+                            data-id="${session.id}" 
+                            title="${completed ? 'مكتملة' : 'إتمام'}">
+                        ${completed ? UI.getIcon('check') : '<div class="check-ring"></div>'}
                     </button>
-                    <button class="btn btn-sm btn-secondary edit-btn" data-id="${session.id}" title="تعديل">تعديل</button>
+                    <button class="action-btn-pro edit-btn" 
+                            data-id="${session.id}" 
+                            title="تعديل">
+                        ${UI.getIcon('settings') || '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'}
+                    </button>
                 </div>
             </div>
         `;
@@ -206,28 +235,28 @@ const Dashboard = {
 
         const html = `
             <div class="modal active" id="${modalId}">
-              <div class="modal-content" style="max-width: 480px;">
+              <div class="modal-content edit-session-modal-content">
                 <div class="modal-header">
-                    <h2>تعديل الجلسة</h2>
+                    <h3>تعديل الجلسة</h3>
                     <button class="close-btn" onclick="document.getElementById('${modalId}').remove()">×</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label>التاريخ</label>
-                        <input type="date" id="edit-session-date" value="${s.scheduled_date}">
+                        <input type="date" id="edit-session-date" class="form-control form-control-lg" value="${s.scheduled_date}">
                     </div>
                     <div class="form-group">
                         <label>الوقت</label>
-                        <input type="time" id="edit-session-time" value="${s.scheduled_time}">
+                        <input type="time" id="edit-session-time" class="form-control form-control-lg" value="${s.scheduled_time}">
                     </div>
                     <div class="form-group">
                         <label>ملاحظة</label>
-                        <input type="text" id="edit-session-notes" value="${s.notes || ''}">
+                        <input type="text" id="edit-session-notes" class="form-control form-control-lg" value="${s.notes || ''}" placeholder="أضف ملاحظة...">
                     </div>
                 </div>
-                <div class="modal-footer" style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button class="btn btn-secondary" onclick="document.getElementById('${modalId}').remove()">إلغاء</button>
-                    <button class="btn btn-primary" id="save-session-edit">حفظ</button>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-lg" onclick="document.getElementById('${modalId}').remove()">إلغاء</button>
+                    <button class="btn btn-primary btn-lg" id="save-session-edit">حفظ التغييرات</button>
                 </div>
               </div>
             </div>`;
@@ -456,14 +485,21 @@ const Dashboard = {
 
         const html = `
             <div class="modal show" id="courses-modal" style="display: flex !important;">
-                <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-content modal-lg">
                     <div class="modal-header">
-                        <h2>اختر موادك - ${major.name_ar}</h2>
-                        <button class="modal-close" onclick="document.getElementById('courses-modal').remove()">×</button>
+                        <div class="header-title">
+                            <div class="icon-box-sm">${UI.getIcon('book')}</div>
+                            <h3>اختر موادك - ${major.name_ar}</h3>
+                        </div>
+                        <button class="close-btn" onclick="document.getElementById('courses-modal').remove()">×</button>
                     </div>
                     <div class="modal-body">
-                        <p style="margin-bottom: 15px; color: #666;">اختر من ${MIN_COURSES} إلى ${MAX_COURSES} مواد:</p>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto;">
+                        <div class="alert alert-info" style="margin-bottom: 20px; background: #e3f2fd; color: #0d47a1; border: none; border-radius: 10px; padding: 15px; display: flex; align-items: center; gap: 10px;">
+                            ${UI.getIcon('info')}
+                            <span>اختر من ${MIN_COURSES} إلى ${MAX_COURSES} مواد لإضافتها إلى ملفك الشخصي.</span>
+                        </div>
+                        
+                        <div class="courses-grid">
                             ${major.courses.map(code => {
                                 const c = SEU_COMPLETE_DATA.courses[code] || {
                                     code,
@@ -473,26 +509,58 @@ const Dashboard = {
                                     hours: 3
                                 };
                                 return `
-                                <label style="display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
-                                    <input type="checkbox" value="${code}" data-course='${JSON.stringify(c)}' style="margin-left: 10px;">
-                                    <div>
-                                        <strong style="color: #0066cc;">${c.code}</strong><br>
-                                        <span style="font-size: 14px;">${c.name_ar}</span><br>
-                                        <span style="display: inline-flex; align-items: center; gap: 2px;">${UI.getIcon('star').repeat(c.difficulty || 3)}</span>
+                                <label class="course-card-new" data-code="${code}">
+                                    <input type="checkbox" value="${code}" data-course='${JSON.stringify(c)}'>
+                                    <div class="course-card-inner">
+                                        <div class="course-card-top">
+                                            <span class="course-code-tag">${c.code}</span>
+                                            <div class="check-circle">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                        </div>
+                                        <div class="course-title-new">${c.name_ar}</div>
+                                        <div class="course-meta-new">
+                                            <div class="meta-item">
+                                                ${UI.getIcon('star')}
+                                                ${c.difficulty || 3}/5
+                                            </div>
+                                            <div class="meta-item">
+                                                ${UI.getIcon('clock')}
+                                                ${c.hours || 3} ساعات
+                                            </div>
+                                        </div>
                                     </div>
                                 </label>
                             `}).join('')}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" onclick="document.getElementById('courses-modal').remove()">إلغاء</button>
-                        <button class="btn btn-primary" onclick="Dashboard.saveSelectedCourses()">حفظ</button>
+                        <div class="selection-info">
+                            <span class="info-label">تم اختيار:</span>
+                            <span class="badge-count" id="selection-count">0</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary btn-lg" onclick="document.getElementById('courses-modal').remove()">إلغاء</button>
+                            <button class="btn btn-primary btn-lg" onclick="Dashboard.saveSelectedCourses()">حفظ التغييرات</button>
+                        </div>
                     </div>
                 </div>
             </div>
         `;
 
         document.body.insertAdjacentHTML('beforeend', html);
+
+        // Add counter logic
+        const modal = document.getElementById('courses-modal');
+        const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+        const counter = document.getElementById('selection-count');
+
+        const updateCount = () => {
+            const count = modal.querySelectorAll('input[type="checkbox"]:checked').length;
+            counter.textContent = count;
+        };
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateCount));
     },
 
     saveSelectedCourses() {

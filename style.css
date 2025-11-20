@@ -243,6 +243,25 @@ body.dark-mode #sessions-page .card[style*="fce7f3"] div[style*="rgba(244, 63, 9
         min-height: 44px;
         padding: 12px 20px;
     }
+    
+    /* Mobile User Name */
+    .nav-user-mobile {
+        display: none;
+        padding: 15px;
+        font-weight: 600;
+        color: var(--primary);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .nav-user-mobile {
+        display: block;
+    }
+    
+    .nav-user {
+        display: none;
+    }
 }
 
 @media (max-width: 480px) {
