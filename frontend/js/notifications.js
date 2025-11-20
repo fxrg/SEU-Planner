@@ -21,7 +21,7 @@ window.Notifications = {
             if (notifications.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <span class="empty-icon">🔔</span>
+                        <span class="empty-icon">${UI.getIcon('bell')}</span>
                         <p>لا توجد إشعارات</p>
                     </div>
                 `;
@@ -53,16 +53,16 @@ window.Notifications = {
     renderNotification(notif) {
         const date = new Date(notif.created_at).toLocaleString('ar-SA');
         const typeIcons = {
-            daily: '📅',
-            reminder: '⏰',
-            warning: '⚠️',
-            info: 'ℹ️',
-            exam: '📝'
+            daily: UI.getIcon('calendar'),
+            reminder: UI.getIcon('clock'),
+            warning: UI.getIcon('warning'),
+            info: UI.getIcon('info'),
+            exam: UI.getIcon('clipboard')
         };
 
         return `
             <div class="notif-item ${notif.is_read ? 'read' : 'unread'}" data-id="${notif.id}">
-                <div class="notif-icon">${typeIcons[notif.notification_type] || '📬'}</div>
+                <div class="notif-icon">${typeIcons[notif.notification_type] || UI.getIcon('mail')}</div>
                 <div class="notif-content">
                     <div class="notif-title">${notif.title}</div>
                     <div class="notif-message">${notif.message}</div>

@@ -417,3 +417,14 @@ body.dark-mode .session-actions .btn-danger:hover {
         flex: 1;
     }
 }
+
+@media (max-width: 768px) {
+    .nav-link {
+        justify-content: flex-start;
+        padding: 12px 15px;
+    }
+
+    .nav-link .icon {
+        margin-left: 10px;
+    }
+}

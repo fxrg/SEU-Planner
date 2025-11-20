@@ -21,20 +21,20 @@
       try {
         if (firebase.firestore) {
           window.db = firebase.firestore();
-          console.log('%c✅ Firestore initialized', 'color: green');
+          console.log('%cFirestore initialized', 'color: green');
         } else {
           console.warn('Firestore SDK not loaded. Add firebase-firestore-compat.js');
         }
       } catch (e) {
         console.warn('Firestore init error:', e);
       }
-      console.log('%c✅ Firebase Enabled - Accounts saved to cloud', 'color: green; font-weight: bold');
-      console.log('📊 Check users at: https://console.firebase.google.com');
+      console.log('%cFirebase Enabled - Accounts saved to cloud', 'color: green; font-weight: bold');
+      console.log('Check users at: https://console.firebase.google.com');
     } else {
       window.FIREBASE_ENABLED = false;
-      console.log('%c⚠️ Firebase NOT configured - Running in OFFLINE mode', 'color: orange; font-weight: bold');
-      console.log('📝 Accounts saved to localStorage ONLY (not synced across devices)');
-      console.log('🔥 To enable Firebase:');
+      console.log('%cFirebase NOT configured - Running in OFFLINE mode', 'color: orange; font-weight: bold');
+      console.log('Accounts saved to localStorage ONLY (not synced across devices)');
+      console.log('To enable Firebase:');
       console.log('   1. Open FIREBASE-SETUP.md for instructions');
       console.log('   2. Add your Firebase config to index.html');
       console.log('   3. Reload the page');

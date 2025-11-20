@@ -133,201 +133,212 @@
 
 /* التقويم */
 .calendar-container {
-    background: white;
-    border-radius: var(--radius);
+    background: var(--bg-primary); /* Use variable */
+    border-radius: 16px;
     box-shadow: var(--shadow);
-    padding: 20px;
+    padding: 24px;
+    border: 1px solid var(--border);
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    border-bottom: 2px solid var(--border);
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
     margin-bottom: 20px;
 }
 
 .calendar-header h3 {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .calendar-day {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px;
-    min-height: 120px;
-    transition: var(--transition);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 140px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 .calendar-day:hover {
+    transform: translateY(-3px);
     box-shadow: var(--shadow);
     border-color: var(--primary);
+    z-index: 2;
 }
 
 .calendar-day.today {
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(0, 102, 204, 0.05));
+    background: linear-gradient(145deg, rgba(67, 97, 238, 0.05) 0%, rgba(67, 97, 238, 0.1) 100%);
     border: 2px solid var(--primary);
 }
 
 .calendar-day.past {
-    opacity: 0.6;
+    opacity: 0.7;
+    background: rgba(0,0,0,0.02);
 }
 
 .day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .day-number {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--dark);
 }
 
 .day-name {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     color: var(--text-secondary);
+    font-weight: 600;
 }
 
 .day-badge {
     background: var(--primary);
     color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
 .day-sessions {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    flex: 1;
 }
 
 .no-sessions {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     color: var(--text-secondary);
-    font-size: 0.9rem;
-    padding: 20px 0;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    font-style: italic;
 }
 
 .calendar-session {
-    background: var(--light);
-    border-radius: 5px;
-    padding: 6px 8px;
-    font-size: 0.85rem;
+    background: white;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
     border-right: 3px solid var(--primary);
-    position: relative;
-    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     transition: var(--transition);
+    cursor: pointer;
 }
 
 .calendar-session:hover {
-    transform: translateX(-2px);
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
 }
 
-.calendar-session.reading {
-    border-right-color: #1976d2;
-    background: #e3f2fd;
-}
-
-.calendar-session.practice {
-    border-right-color: #7b1fa2;
-    background: #f3e5f5;
-}
-
-.calendar-session.review {
-    border-right-color: #f57c00;
-    background: #fff3e0;
-}
-
-.calendar-session.quiz {
-    border-right-color: #c2185b;
-    background: #fce4ec;
-}
-
-.calendar-session.group {
-    border-right-color: #388e3c;
-    background: #e8f5e9;
-}
+.calendar-session.reading { border-right-color: #4361ee; background: #f0f4ff; }
+.calendar-session.practice { border-right-color: #7209b7; background: #f8f0fc; }
+.calendar-session.review { border-right-color: #f72585; background: #fff0f6; }
+.calendar-session.quiz { border-right-color: #f8961e; background: #fff8f0; }
+.calendar-session.group { border-right-color: #4cc9f0; background: #f0faff; }
 
 .calendar-session.completed {
     opacity: 0.6;
+    text-decoration: line-through;
+    filter: grayscale(1);
 }
 
 .session-time {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-secondary);
+    display: block;
+    margin-bottom: 2px;
 }
 
 .session-course {
     font-weight: 600;
     color: var(--dark);
     display: block;
-    margin: 3px 0;
+    line-height: 1.3;
 }
 
-.session-type-badge-sm {
-    font-size: 0.7rem;
+/* Dark Mode Overrides for Calendar */
+body.dark-mode .calendar-container {
+    background: var(--bg-primary);
+    border-color: var(--border);
+}
+
+body.dark-mode .calendar-header h3 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .calendar-day {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+}
+
+body.dark-mode .calendar-day:hover {
+    background: #2a2a3a;
+    border-color: var(--primary);
+}
+
+body.dark-mode .calendar-day.today {
+    background: rgba(67, 97, 238, 0.15);
+    border-color: var(--primary);
+}
+
+body.dark-mode .day-number {
+    color: var(--text-primary);
+}
+
+body.dark-mode .day-header {
+    border-bottom-color: rgba(255,255,255,0.05);
+}
+
+body.dark-mode .calendar-session {
+    background: #2a2a3a;
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+body.dark-mode .calendar-session:hover {
+    background: #333344;
+}
+
+body.dark-mode .session-course {
+    color: var(--text-primary);
+}
+
+body.dark-mode .calendar-session.reading { background: rgba(67, 97, 238, 0.15); }
+body.dark-mode .calendar-session.practice { background: rgba(114, 9, 183, 0.15); }
+body.dark-mode .calendar-session.review { background: rgba(247, 37, 133, 0.15); }
+body.dark-mode .calendar-session.quiz { background: rgba(248, 150, 30, 0.15); }
+body.dark-mode .calendar-session.group { background: rgba(76, 201, 240, 0.15); }
+
+body.dark-mode .no-sessions {
     color: var(--text-secondary);
-}
-
-.completed-check {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    background: var(--secondary);
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-}
-
-.day-progress {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-}
-
-.progress-bar {
-    background: var(--border);
-    height: 6px;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 4px;
-}
-
-.progress-fill {
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    height: 100%;
-    transition: width 0.3s ease;
-}
-
-.progress-text {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+    opacity: 0.3;
 }
 
 /* Modal تحسينات */
@@ -340,95 +351,219 @@
     overflow-y: auto;
 }
 
-.course-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
+/* ==================== Courses List ==================== */
+.courses-list {
+    max-height: 500px;
+    overflow-y: auto;
     border: 2px solid var(--border);
     border-radius: var(--radius);
-    margin-bottom: 10px;
-    transition: var(--transition);
-    cursor: pointer;
+    padding: 20px;
+    background: var(--bg-secondary);
 }
 
-.course-item:hover {
+#courses-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.course-card-item {
+    position: relative;
+}
+
+.course-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.course-card-label {
+    display: block;
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.course-card-label:hover {
     border-color: var(--primary);
-    background: rgba(0, 102, 204, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.course-item input[type="checkbox"] {
-    margin-left: 12px;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+.course-checkbox:checked + .course-card-label {
+    border-color: var(--primary);
+    background: linear-gradient(145deg, #f0f7ff 0%, #ffffff 100%);
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
 }
 
-.course-item label {
-    flex: 1;
+.course-card-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    margin: 0;
+    margin-bottom: 12px;
 }
 
-.course-code {
+.course-code-badge {
+    background: var(--light);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.course-checkbox:checked + .course-card-label .course-code-badge {
     background: var(--primary);
     color: white;
-    padding: 4px 10px;
-    border-radius: 5px;
-    font-weight: 600;
-    font-size: 0.85rem;
 }
 
 .course-difficulty {
-    margin-right: auto;
+    display: flex;
+    gap: 2px;
     color: #ffc107;
 }
 
-/* Dark Mode للأنماط الجديدة */
-body.dark-mode .session-card {
-    background: var(--bg-primary);
-    border-right-color: var(--primary);
+.course-difficulty svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
 }
 
-body.dark-mode .session-title {
+.course-card-body {
+    margin-bottom: 8px;
+}
+
+.course-name {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.4;
+}
+
+.course-hours-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.course-selection-indicator {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 24px;
+    height: 24px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.course-checkbox:checked + .course-card-label .course-selection-indicator {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ==================== Course Search Box ==================== */
+.course-search-box {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.course-search-box input {
+    width: 100%;
+    padding: 14px 20px;
+    padding-left: 45px; /* Space for icon if added */
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    color: var(--dark);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.course-search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+    outline: none;
+}
+
+#search-count {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-align: left;
+    padding-left: 5px;
+}
+
+/* Dark Mode for Search Box */
+body.dark-mode .course-search-box input {
+    background: var(--bg-secondary);
+    border-color: var(--border);
     color: var(--text-primary);
 }
 
-body.dark-mode .session-notes {
+body.dark-mode .course-search-box input:focus {
+    border-color: var(--primary);
+    background: #2f2f3f;
+}
+
+/* ==================== Dark Mode for Course Cards (New Design) ==================== */
+body.dark-mode .course-card-label {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+body.dark-mode .course-card-label:hover {
+    border-color: var(--primary);
     background: #2a2a3a;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .course-checkbox:checked + .course-card-label {
+    background: linear-gradient(145deg, rgba(67, 97, 238, 0.15) 0%, #2a2a3a 100%);
+    border-color: var(--primary);
+}
+
+body.dark-mode .course-name {
+    color: var(--text-primary);
+}
+
+body.dark-mode .course-code-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary-light);
+}
+
+body.dark-mode .course-checkbox:checked + .course-card-label .course-code-badge {
+    background: var(--primary);
+    color: white;
+}
+
+body.dark-mode .course-hours-badge {
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text-secondary);
 }
 
-body.dark-mode .calendar-container {
-    background: var(--bg-primary);
-}
-
-body.dark-mode .calendar-day {
-    background: var(--bg-secondary);
-    border-color: var(--border);
-}
-
-body.dark-mode .calendar-day.today {
-    background: linear-gradient(135deg, rgba(90, 159, 255, 0.2), rgba(90, 159, 255, 0.1));
-}
-
-body.dark-mode .calendar-session {
-    background: #2a2a3a;
-}
-
-body.dark-mode .session-course {
-    color: var(--text-primary);
-}
-
-body.dark-mode .course-item {
-    background: var(--bg-secondary);
-    border-color: var(--border);
-}
-
-body.dark-mode .course-item:hover {
-    background: rgba(90, 159, 255, 0.1);
+body.dark-mode .course-difficulty {
+    color: #ffd166; /* Brighter yellow for dark mode */
 }
 
 /* تحسينات responsive */
@@ -474,10 +609,8 @@ body.dark-mode .course-item:hover {
 
 /* Countdown تحسينات */
 .countdown-container {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
+    /* background removed as per user request */
     border-radius: var(--radius);
-    padding: 15px 20px;
 }
 
 .countdown-box {

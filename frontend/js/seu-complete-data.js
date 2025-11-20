@@ -322,6 +322,6 @@ const SEU_COMPLETE_DATA = {
     }
 };
 
-console.log('✅ SEU Complete Data loaded');
-console.log(`📚 ${Object.keys(SEU_COMPLETE_DATA.majors).length} majors loaded`);
-console.log(`📖 ${Object.keys(SEU_COMPLETE_DATA.courses).length} courses loaded`);
+console.log('SEU Complete Data loaded');
+console.log(`${Object.keys(SEU_COMPLETE_DATA.majors).length} majors loaded`);
+console.log(`${Object.keys(SEU_COMPLETE_DATA.courses).length} courses loaded`);

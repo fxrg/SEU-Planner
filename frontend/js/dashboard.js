@@ -112,11 +112,11 @@ const Dashboard = {
             
             container.innerHTML = `
                 <div class="empty-state">
-                    <span class="empty-icon">📚</span>
+                    <span class="empty-icon">${UI.getIcon('book')}</span>
                     <p>لا توجد جلسات اليوم</p>
                     ${!hasCourses ? 
-                        '<button id="choose-courses-btn" class="btn btn-primary" style="margin-top: 15px;">اختر موادك 📝</button>' : 
-                        '<button id="create-plan-btn" class="btn btn-primary" style="margin-top: 15px;">إنشاء خطة 📅</button>'
+                        `<button id="choose-courses-btn" class="btn btn-primary" style="margin-top: 15px;">اختر موادك ${UI.getIcon('clipboard')}</button>` : 
+                        `<button id="create-plan-btn" class="btn btn-primary" style="margin-top: 15px;">إنشاء خطة ${UI.getIcon('calendar')}</button>`
                     }
                 </div>
             `;
@@ -166,19 +166,19 @@ const Dashboard = {
         
         // عنوان المادة مع رقم الموديول
         const titleWithModule = moduleNumber ? 
-            `${courseName} <span style="display: inline-block; background: linear-gradient(135deg, #5a9fff, #4080d0); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-right: 10px; box-shadow: 0 2px 4px rgba(90, 159, 255, 0.3);">📚 موديول ${moduleNumber}</span>` : 
+            `${courseName} <span style="display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #5a9fff, #4080d0); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-right: 10px; box-shadow: 0 2px 4px rgba(90, 159, 255, 0.3);">${UI.getIcon('book')} موديول ${moduleNumber}</span>` : 
             courseName;
 
         return `
             <div class="session-card ${completed ? 'completed' : ''} ${isFinalReview ? 'final-review' : ''}">
                 <div class="session-info">
-                    <div class="session-title">${isFinalReview ? '🔥 ' : ''}${titleWithModule}</div>
+                    <div class="session-title">${isFinalReview ? UI.getIcon('fire') + ' ' : ''}${titleWithModule}</div>
                     <div class="session-meta">
-                        <span>⏱️ ${duration}</span>
-                        <span>📖 ${type}</span>
-                        <span>🔢 ${session.course_code}</span>
-                        <span>🕐 ${UI.formatClock(session.scheduled_time)}</span>
-                        ${isFinalReview ? '<span style="color: #ff5722; font-weight: bold;">⚠️ مراجعة نهائية</span>' : ''}
+                        <span>${UI.getIcon('timer')} ${duration}</span>
+                        <span>${UI.getIcon('book')} ${type}</span>
+                        <span>${UI.getIcon('hash')} ${session.course_code}</span>
+                        <span>${UI.getIcon('clock')} ${UI.formatClock(session.scheduled_time)}</span>
+                        ${isFinalReview ? `<span style="color: #ff5722; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">${UI.getIcon('warning')} مراجعة نهائية</span>` : ''}
                     </div>
                     ${session.notes ? `<div class="session-notes" style="margin-top: 8px; color: ${isFinalReview ? '#ff5722' : '#666'}; font-size: 14px;">${session.notes}</div>` : ''}
                     <span class="session-type-badge session-type-${session.session_type}" style="${isFinalReview ? 'background: #ff5722; color: white;' : ''}">${type}</span>
@@ -256,7 +256,7 @@ const Dashboard = {
             UI.showToast('تم إلغاء إتمام الجلسة', 'info');
         } else {
             StudyPlanner.completeSession(id);
-            UI.showToast('تم إتمام الجلسة بنجاح! 🎉', 'success');
+            UI.showToast('تم إتمام الجلسة بنجاح!', 'success');
         }
 
         // Reload
@@ -267,12 +267,15 @@ const Dashboard = {
     checkPlan() {
         const plan = StudyPlanner.getCurrentPlan();
         const noPlanSection = document.getElementById('no-plan-section');
+        const todaySection = document.getElementById('today-sessions-section');
         
         if (noPlanSection) {
             if (plan) {
                 noPlanSection.classList.add('hidden');
+                if (todaySection) todaySection.classList.remove('hidden');
             } else {
                 noPlanSection.classList.remove('hidden');
+                if (todaySection) todaySection.classList.add('hidden');
             }
         }
     },
@@ -290,12 +293,11 @@ const Dashboard = {
             const courseCodes = major.courses || [];
 
             const searchHTML = `
-                <div class="course-search-box" style="margin-bottom: 20px;">
+                <div class="course-search-box">
                     <input type="text" 
                            id="course-search-input" 
-                           placeholder="🔍 ابحث عن مقرر (الاسم أو الرمز)..."
-                           style="width: 100%; padding: 12px 20px; border: 2px solid #e0e0e0; border-radius: 25px; font-size: 15px; transition: all 0.3s;">
-                    <div id="search-count" style="margin-top: 8px; color: #666; font-size: 14px;"></div>
+                           placeholder="ابحث عن مقرر (الاسم أو الرمز)...">
+                    <div id="search-count"></div>
                 </div>
             `;
 
@@ -309,14 +311,22 @@ const Dashboard = {
                 };
 
                 return `
-                    <div class="course-item" data-code="${code}" data-name="${courseData.name_ar.toLowerCase()}">
-                        <input type="checkbox" id="course-${code}" value="${code}" data-course='${JSON.stringify(courseData)}'>
-                        <label for="course-${code}">
-                            <span class="course-code">${code}</span>
-                            ${courseData.name_ar}
-                            <span class="course-difficulty">
-                                ${'⭐'.repeat(courseData.difficulty || 3)}
-                            </span>
+                    <div class="course-card-item" data-code="${code}" data-name="${courseData.name_ar.toLowerCase()}">
+                        <input type="checkbox" id="course-${code}" value="${code}" data-course='${JSON.stringify(courseData)}' class="course-checkbox">
+                        <label for="course-${code}" class="course-card-label">
+                            <div class="course-card-header">
+                                <span class="course-code-badge">${code}</span>
+                                <div class="course-difficulty" title="مستوى الصعوبة">
+                                    ${UI.getIcon('star').repeat(courseData.difficulty || 3)}
+                                </div>
+                            </div>
+                            <div class="course-card-body">
+                                <h4 class="course-name">${courseData.name_ar}</h4>
+                                <span class="course-hours-badge">${courseData.hours || 3} ساعات</span>
+                            </div>
+                            <div class="course-selection-indicator">
+                                ${UI.getIcon('check')}
+                            </div>
                         </label>
                     </div>
                 `;
@@ -328,7 +338,7 @@ const Dashboard = {
             const searchInput = document.getElementById('course-search-input');
             const searchCount = document.getElementById('search-count');
             const coursesContainer = document.getElementById('courses-container');
-            const allCourseItems = coursesContainer.querySelectorAll('.course-item');
+            const allCourseItems = coursesContainer.querySelectorAll('.course-card-item');
 
             searchCount.textContent = `إجمالي المقررات: ${allCourseItems.length}`;
 
@@ -340,7 +350,7 @@ const Dashboard = {
                     const code = item.dataset.code.toLowerCase();
                     const name = item.dataset.name;
                     const matches = code.includes(searchTerm) || name.includes(searchTerm);
-                    item.style.display = matches ? 'flex' : 'none';
+                    item.style.display = matches ? 'block' : 'none';
                     if (matches) visibleCount++;
                 });
 
@@ -374,8 +384,8 @@ const Dashboard = {
         const container = document.getElementById('courses-list');
         const majors = SEU_COMPLETE_DATA.majors;
         const options = Object.entries(majors).map(([key, m]) => `<option value="${key}">${m.name_ar} — <small>${m.college_ar}</small></option>`).join('');
-        const info = `<div class="alert" style="background:#f7f7f7; border:1px solid #eee; padding:10px 12px; border-radius:8px; margin-bottom:12px; color:#666;">
-            👀 أنت تتصفح كضيف. يمكن رؤية المواد فقط. لإنشاء خطة يلزم تسجيل الدخول.
+        const info = `<div class="alert" style="background:#f7f7f7; border:1px solid #eee; padding:10px 12px; border-radius:8px; margin-bottom:12px; color:#666; display: flex; align-items: center; gap: 8px;">
+            ${UI.getIcon('eye')} أنت تتصفح كضيف. يمكن رؤية المواد فقط. لإنشاء خطة يلزم تسجيل الدخول.
         </div>`;
         const majorPicker = `
             ${Auth.isGuest() ? info : ''}
@@ -472,7 +482,7 @@ const Dashboard = {
                                     <div>
                                         <strong style="color: #0066cc;">${c.code}</strong><br>
                                         <span style="font-size: 14px;">${c.name_ar}</span><br>
-                                        <span>${'⭐'.repeat(c.difficulty || 3)}</span>
+                                        <span style="display: inline-flex; align-items: center; gap: 2px;">${UI.getIcon('star').repeat(c.difficulty || 3)}</span>
                                     </div>
                                 </label>
                             `}).join('')}
@@ -536,7 +546,7 @@ const Dashboard = {
         
         try {
             const plan = StudyPlanner.generatePlan(courses, termId, intensity);
-            UI.showToast(`تم إنشاء خطتك الدراسية بنجاح! 🎉\n${plan.total_sessions} جلسة دراسية`, 'success');
+            UI.showToast(`تم إنشاء خطتك الدراسية بنجاح!\n${plan.total_sessions} جلسة دراسية`, 'success');
             UI.hideModal('plan-modal');
             this.load();
         } catch (error) {

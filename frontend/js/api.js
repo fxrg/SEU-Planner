@@ -318,4 +318,4 @@ const API = {
     }
 };
 
-console.log('✅ API module loaded (OFFLINE MODE - No backend required)');
+console.log('API module loaded (OFFLINE MODE - No backend required)');

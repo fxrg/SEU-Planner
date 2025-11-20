@@ -125,10 +125,10 @@ const Calendar = {
         return `
             <div class="calendar-session ${session.session_type} ${session.is_completed ? 'completed' : ''}" 
                  title="${session.course_name_ar} - ${session.session_type_ar}">
-                <span class="session-time">🕐 ${UI.formatClock(session.scheduled_time)}</span>
+                <span class="session-time">${UI.getIcon('clock')} ${UI.formatClock(session.scheduled_time)}</span>
                 <span class="session-course">${session.course_code}</span>
                 <span class="session-type-badge-sm">${session.session_type_ar}</span>
-                ${session.is_completed ? '<span class="completed-check">✓</span>' : ''}
+                ${session.is_completed ? `<span class="completed-check">${UI.getIcon('check')}</span>` : ''}
             </div>
         `;
     },

@@ -120,5 +120,5 @@ function getCoursesByMajor(majorId) {
     return MAJORS_DATA[majorId]?.courses || [];
 }
 
-console.log('✅ Majors data loaded successfully');
+console.log('Majors data loaded successfully');
 console.log(`Found ${Object.keys(MAJORS_DATA).length} majors`);

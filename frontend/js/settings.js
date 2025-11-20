@@ -102,7 +102,7 @@ const Settings = {
         const userNameEl = document.getElementById('user-name');
         if (userNameEl) userNameEl.textContent = name;
         
-        UI.showToast('تم حفظ التغييرات ✓', 'success');
+        UI.showToast(`تم حفظ التغييرات ${UI.getIcon('check')}`, 'success');
     },
 
     saveNotificationPreferences() {
@@ -128,7 +128,7 @@ const Settings = {
 
         if (enabled) {
             // Schedule daily notification check
-            UI.showToast('✓ سيتم إرسال إشعارات يومية في ' + time, 'success');
+            UI.showToast(`${UI.getIcon('check')} سيتم إرسال إشعارات يومية في ` + time, 'success');
             StudyPlanner.checkAndSendNotifications();
         } else {
             UI.showToast('تم تعطيل الإشعارات', 'info');
@@ -143,7 +143,7 @@ const Settings = {
                 const regenerate = () => {
                     try {
                         StudyPlanner.generatePlan(plan.courses, plan.term_id, intensity);
-                        UI.showToast('✓ تم تحديث الخطة الدراسية بنجاح', 'success');
+                        UI.showToast(`${UI.getIcon('check')} تم تحديث الخطة الدراسية بنجاح`, 'success');
 
                         // أعد تحميل الصفحة النشطة
                         if (document.getElementById('dashboard-page').classList.contains('active')) {
@@ -177,7 +177,7 @@ const Settings = {
         if (oldStudyStart !== studyStartTime) {
             const updated = StudyPlanner.applyStudyStartTime();
             if (updated) {
-                UI.showToast('✓ تم تحديث أوقات الجلسات حسب وقت البداية الجديد', 'success');
+                UI.showToast(`${UI.getIcon('check')} تم تحديث أوقات الجلسات حسب وقت البداية الجديد`, 'success');
                 if (document.getElementById('dashboard-page').classList.contains('active')) {
                     Dashboard.load();
                 } else if (document.getElementById('calendar-page').classList.contains('active')) {

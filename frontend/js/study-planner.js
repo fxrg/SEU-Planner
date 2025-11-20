@@ -274,7 +274,7 @@ const StudyPlanner = {
                     course_name_ar: course.name_ar,
                     course_name_en: course.name_en,
                     session_type: sessionType,
-                    session_type_ar: sessionType === 'final-review' ? '🔥 مراجعة نهائية' : this.getSessionTypeArabic(sessionType),
+                    session_type_ar: sessionType === 'final-review' ? 'مراجعة نهائية' : this.getSessionTypeArabic(sessionType),
                     duration_minutes: duration,
                     scheduled_date: reviewDate.toISOString().split('T')[0],
                     scheduled_time: dayBefore === 1 ? '09:00' : '10:00',
@@ -283,7 +283,7 @@ const StudyPlanner = {
                     priority: 'high',
                     difficulty: course.difficulty_level || 3,
                     notes: dayBefore === 1 
-                        ? `🔥 مراجعة نهائية شاملة لـ ${course.name_ar} - يوم واحد قبل الاختبار!`
+                        ? `مراجعة نهائية شاملة لـ ${course.name_ar} - يوم واحد قبل الاختبار!`
                         : `مراجعة مكثفة لـ ${course.name_ar} - ${dayBefore} أيام قبل الاختبار`
                 });
             }
@@ -488,7 +488,7 @@ const StudyPlanner = {
         
         const incompleteSessions = todaySessions.filter(s => !s.is_completed);
         if (incompleteSessions.length === 0) {
-            new Notification('🎉 SEU Planner', {
+            new Notification('SEU Planner', {
                 body: 'أحسنت! أكملت جميع جلسات اليوم',
                 icon: '/icon.png'
             });
@@ -496,7 +496,7 @@ const StudyPlanner = {
         }
         
         const firstSession = incompleteSessions[0];
-        new Notification('📚 SEU Planner - تذكير دراسي', {
+        new Notification('SEU Planner - تذكير دراسي', {
             body: `لديك ${incompleteSessions.length} جلسات اليوم.\nابدأ بـ: ${firstSession.course_name_ar} - ${firstSession.session_type_ar}`,
             icon: '/icon.png',
             tag: 'daily-reminder'
@@ -536,4 +536,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 60 * 60 * 1000); // كل ساعة
 });
 
-console.log('✅ Study Planner module loaded');
+console.log('Study Planner module loaded');

@@ -1,6 +1,6 @@
 // Main App Initialization
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 SEU Planner Started');
+    console.log('SEU Planner Started');
 
     // Initialize auth
     await Auth.init();
@@ -10,7 +10,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         UI.showPage('dashboard-page');
         await Dashboard.load();
     } else {
-        UI.showPage('login-page');
+        UI.showPage('landing-page');
+    }
+
+    // Landing Page Event Listeners
+    const landingLoginBtn = document.getElementById('landing-login-btn');
+    if (landingLoginBtn) {
+        landingLoginBtn.addEventListener('click', () => UI.showPage('login-page'));
+    }
+
+    const landingRegisterBtn = document.getElementById('landing-register-btn');
+    if (landingRegisterBtn) {
+        landingRegisterBtn.addEventListener('click', () => UI.showPage('register-page'));
+    }
+
+    const heroCtaBtn = document.getElementById('hero-cta-btn');
+    if (heroCtaBtn) {
+        heroCtaBtn.addEventListener('click', () => UI.showPage('register-page'));
+    }
+
+    const heroGuestBtn = document.getElementById('hero-guest-btn');
+    if (heroGuestBtn) {
+        heroGuestBtn.addEventListener('click', () => {
+            // Trigger guest login logic from auth.js if available, or just show dashboard
+            // Assuming Auth.guestLogin() exists or similar, but based on UI flow:
+            // The guest login button in login page triggers Auth.loginAsGuest()
+            // We can simulate a click on that button or call the function directly if exposed.
+            // Let's check auth.js content first or just redirect to login page and auto-click guest?
+            // Better: Call Auth.loginAsGuest() if it exists.
+            if (typeof Auth.loginAsGuest === 'function') {
+                Auth.loginAsGuest();
+            } else {
+                // Fallback: go to login page and let user click guest
+                UI.showPage('login-page');
+                // Optional: highlight guest button
+            }
+        });
     }
 
     // Setup navigation
@@ -61,5 +96,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }, 60000);
 
-    console.log('✅ App initialized');
+    // Mobile Menu Logic
+    const burgerMenu = document.getElementById('burger-menu');
+    const navLinks = document.getElementById('nav-links');
+    const navOverlay = document.getElementById('nav-overlay');
+
+    function toggleMenu() {
+        burgerMenu.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        navOverlay.classList.toggle('active');
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+    }
+
+    function closeMenu() {
+        burgerMenu.classList.remove('active');
+        navLinks.classList.remove('active');
+        navOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (burgerMenu) {
+        burgerMenu.addEventListener('click', toggleMenu);
+    }
+
+    if (navOverlay) {
+        navOverlay.addEventListener('click', closeMenu);
+    }
+
+    // Close menu when clicking a link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                closeMenu();
+            }
+        });
+    });
+
+    console.log('App initialized');
 });

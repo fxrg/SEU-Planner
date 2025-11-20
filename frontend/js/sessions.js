@@ -115,7 +115,7 @@ const Sessions = {
           breaks,
           breakDuration
         });
-        UI.showToast('تم إنشاء الجلسة! شارك الكود مع أصدقائك 👍', 'success');
+        UI.showToast(`تم إنشاء الجلسة! شارك الكود مع أصدقائك ${UI.getIcon('check')}`, 'success');
         this._saveActiveCode(code);
         this.goToSessionPage(code);
       } catch (err) {
@@ -148,7 +148,7 @@ const Sessions = {
           return;
         }
         await this.joinSession(code);
-        UI.showToast('تم الانضمام للجلسة ✨', 'success');
+        UI.showToast(`تم الانضمام للجلسة ${UI.getIcon('star')}`, 'success');
         this._saveActiveCode(code);
         this.goToSessionPage(code);
       } catch (err) {
@@ -189,7 +189,7 @@ const Sessions = {
         try {
           this._setBusy(true);
           await this.startBreak();
-          UI.showToast('بدأت الاستراحة ☕', 'success');
+          UI.showToast(`بدأت الاستراحة ${UI.getIcon('coffee')}`, 'success');
         } catch (e) {
           UI.showToast(e.message || 'تعذر بدء الاستراحة', 'error');
         } finally { this._setBusy(false); }
@@ -201,7 +201,7 @@ const Sessions = {
         try {
           this._setBusy(true);
           await this.endBreak();
-          UI.showToast('استمرت الدراسة 📚', 'success');
+          UI.showToast(`استمرت الدراسة ${UI.getIcon('book')}`, 'success');
         } catch (e) {
           UI.showToast(e.message || 'تعذر إنهاء الاستراحة', 'error');
         } finally { this._setBusy(false); }
@@ -561,7 +561,7 @@ const Sessions = {
       // Update label based on break status
       if (els.countdownLabel) {
         if (onBreak) {
-          els.countdownLabel.textContent = '⏸️ وقت الاستراحة';
+          els.countdownLabel.innerHTML = `${UI.getIcon('pause')} وقت الاستراحة`;
           els.countdown.style.color = '#f59e0b';
         } else {
           els.countdownLabel.textContent = 'العد التنازلي';
@@ -637,7 +637,7 @@ const Sessions = {
 // Expose to global scope
 window.Sessions = Sessions;
 
-console.log('✅ Sessions module loaded');
+console.log('Sessions module loaded');
 
 // Initialize on load for index.html sessions page
 if (document.readyState === 'loading') {

@@ -28,4 +28,4 @@ document.addEventListener('DOMContentLoaded', () => {
     DarkMode.init();
 });
 
-console.log('✅ Dark mode module loaded');
+console.log('Dark mode module loaded');
